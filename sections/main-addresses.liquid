@@ -1,0 +1,83 @@
+{%- if customer -%}
+<div class="customer-section">
+  <div class="customer-inner customer-inner--wide">
+    {%- render 'breadcrumb' -%}
+    <div class="account-header">
+      <h1 class="customer-page-title">{{ section.settings.heading | default: 'customer.addresses.title' | t }}</h1>
+      <a href="{{ routes.account_url }}" class="btn-ghost">{{ section.settings.back_label }}</a>
+    </div>
+
+    {%- if customer.addresses.size > 0 -%}
+      <div class="customer-address-grid">
+        {%- for address in customer.addresses -%}
+          <div class="customer-address-card {% if address == customer.default_address %}customer-address-card--default{% endif %}">
+            {%- if address == customer.default_address -%}
+              <span class="customer-address-tag">{{ section.settings.default_tag | default: 'customer.addresses.default' | t }}</span>
+            {%- endif -%}
+            <div class="customer-address-text">
+              {{ address.name }}<br>
+              {{ address.address1 }}<br>
+              {%- if address.address2 != blank -%}{{ address.address2 }}<br>{%- endif -%}
+              {{ address.city }}, {{ address.province_code }} {{ address.zip }}<br>
+              {{ address.country }}
+              {%- if address.phone != blank -%}<br>{{ address.phone }}{%- endif -%}
+            </div>
+            <div class="customer-address-actions">
+              <a href="#" data-edit-address="{{ address.id }}">{{ section.settings.edit_label | default: 'customer.addresses.edit' | t }}</a>
+              <button type="button" data-delete-address="{{ address.id }}" data-confirm="{{ section.settings.delete_confirm }}">{{ section.settings.delete_label | default: 'customer.addresses.delete' | t }}</button>
+            </div>
+          </div>
+        {%- endfor -%}
+
+        <div class="customer-address-card customer-address-card--new">
+          <a href="#" class="add-address-link" data-new-address>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            {{ section.settings.add_label | default: 'customer.addresses.add_new' | t }}
+          </a>
+        </div>
+      </div>
+    {%- else -%}
+      <a href="#" class="btn-primary" data-new-address>{{ section.settings.add_label | default: 'customer.addresses.add_new' | t }}</a>
+    {%- endif -%}
+  </div>
+</div>
+
+<style>
+  .account-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 40px; flex-wrap: wrap; gap: 16px; }
+  .customer-address-card--new { display: flex; align-items: center; justify-content: center; min-height: 200px; border: 1px dashed var(--sand); }
+  .add-address-link { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--muted-brown); text-decoration: none; transition: color 0.2s; }
+  .add-address-link:hover { color: var(--charcoal); }
+</style>
+
+<script>
+document.querySelectorAll('[data-delete-address]').forEach(btn => {
+  btn.addEventListener('click', function() {
+    const id = this.dataset.deleteAddress;
+    const confirm_msg = this.dataset.confirm || 'Are you sure?';
+    if (window.confirm(confirm_msg)) {
+      const form = document.createElement('form');
+      form.method = 'POST';
+      form.action = `{{ routes.account_addresses_url }}/${id}`;
+      form.innerHTML = `<input type="hidden" name="_method" value="DELETE">`;
+      document.body.appendChild(form);
+      form.submit();
+    }
+  });
+});
+</script>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Addresses",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading" },
+    { "type": "text", "id": "back_label", "label": "Back Link Label" },
+    { "type": "text", "id": "default_tag", "label": "Default Address Tag" },
+    { "type": "text", "id": "edit_label", "label": "Edit Label" },
+    { "type": "text", "id": "delete_label", "label": "Delete Label" },
+    { "type": "text", "id": "delete_confirm", "label": "Delete Confirm Message" },
+    { "type": "text", "id": "add_label", "label": "Add New Address Label" }
+  ]
+}
+{% endschema %}

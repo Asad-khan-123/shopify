@@ -1,0 +1,79 @@
+<div class="page-section">
+  <div class="page-inner">
+    {%- render 'breadcrumb' -%}
+    <div class="page-layout {% if section.settings.show_sidebar %}page-layout--with-sidebar{% endif %}">
+      <div class="page-content rte">
+        <h1 class="page-title">{{ page.title }}</h1>
+        <div class="page-body">{{ page.content }}</div>
+      </div>
+      {%- if section.settings.show_sidebar and section.settings.sidebar_menu != blank -%}
+        <aside class="page-sidebar" aria-label="{{ page.title | escape }}">
+          <nav>
+            <h2 class="page-sidebar-title">{{ section.settings.sidebar_heading }}</h2>
+            <ul class="page-sidebar-list" role="list">
+              {%- for link in linklists[section.settings.sidebar_menu].links -%}
+                <li>
+                  <a href="{{ link.url }}" class="page-sidebar-link {% if link.current %}active{% endif %}">
+                    {{ link.title }}
+                  </a>
+                </li>
+              {%- endfor -%}
+            </ul>
+          </nav>
+        </aside>
+      {%- endif -%}
+    </div>
+  </div>
+</div>
+
+<style>
+  .page-section { padding: 60px 40px 100px; min-height: 60vh; }
+  .page-inner { max-width: var(--layout-max-width); margin: 0 auto; }
+  .page-layout { display: grid; grid-template-columns: 1fr; gap: 60px; margin-top: 40px; }
+  .page-layout--with-sidebar { grid-template-columns: 1fr 240px; }
+  .page-title { font-family: var(--font-serif); font-size: clamp(32px, 4vw, 52px); font-weight: 300; color: var(--charcoal); margin-bottom: 32px; }
+  .page-body { font-size: 15px; line-height: 1.9; color: var(--muted-brown); }
+  .page-body h2 { font-family: var(--font-serif); font-size: 28px; font-weight: 400; color: var(--charcoal); margin: 36px 0 16px; }
+  .page-body h3 { font-family: var(--font-serif); font-size: 22px; font-weight: 400; color: var(--charcoal); margin: 28px 0 12px; }
+  .page-body p { margin-bottom: 18px; }
+  .page-body ul, .page-body ol { padding-left: 24px; margin-bottom: 18px; }
+  .page-body li { margin-bottom: 8px; }
+  .page-body a { color: var(--accent-rust); text-underline-offset: 3px; }
+  .page-body strong { color: var(--charcoal); font-weight: 500; }
+  .page-sidebar { position: sticky; top: 100px; align-self: start; }
+  .page-sidebar-title { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--muted-brown); margin-bottom: 20px; }
+  .page-sidebar-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 4px; }
+  .page-sidebar-link { display: block; padding: 10px 14px; font-size: 13px; color: var(--muted-brown); text-decoration: none; border-left: 2px solid transparent; transition: all 0.2s; }
+  .page-sidebar-link:hover, .page-sidebar-link.active { color: var(--charcoal); border-color: var(--accent-gold); background: var(--ivory); }
+  @media (max-width: 1024px) { .page-layout--with-sidebar { grid-template-columns: 1fr; } .page-sidebar { display: none; } }
+  @media (max-width: 768px) { .page-section { padding: 40px 20px 60px; } }
+</style>
+
+{% schema %}
+{
+  "name": "Page Content",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_sidebar",
+      "label": "Show Navigation Sidebar",
+      "default": false
+    },
+    {
+      "type": "link_list",
+      "id": "sidebar_menu",
+      "label": "Sidebar Menu"
+    },
+    {
+      "type": "text",
+      "id": "sidebar_heading",
+      "label": "Sidebar Heading"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Page Content"
+    }
+  ]
+}
+{% endschema %}

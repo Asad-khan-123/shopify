@@ -1,0 +1,66 @@
+{
+  "sections": {
+    "hero": {
+      "type": "hero-banner",
+      "settings": {}
+    },
+    "trust": {
+      "type": "trust-cards",
+      "blocks": {
+        "tc1": { "type": "trust_card", "settings": {} },
+        "tc2": { "type": "trust_card", "settings": {} },
+        "tc3": { "type": "trust_card", "settings": {} }
+      },
+      "block_order": ["tc1","tc2","tc3"]
+    },
+    "new-arrivals": {
+      "type": "featured-products",
+      "settings": {}
+    },
+    "featured-collections": {
+      "type": "featured-collections",
+      "blocks": {
+        "col1": { "type": "collection_card", "settings": {} },
+        "col2": { "type": "collection_card", "settings": {} },
+        "col3": { "type": "collection_card", "settings": {} }
+      },
+      "block_order": ["col1","col2","col3"]
+    },
+    "best-sellers": {
+      "type": "featured-products",
+      "settings": {}
+    },
+    "why-tsukie": {
+      "type": "why-tsukie",
+      "blocks": {
+        "p1": { "type": "pillar", "settings": {} },
+        "p2": { "type": "pillar", "settings": {} },
+        "p3": { "type": "pillar", "settings": {} }
+      },
+      "block_order": ["p1","p2","p3"]
+    },
+    "reviews": {
+      "type": "reviews",
+      "blocks": {
+        "r1": { "type": "review", "settings": {} },
+        "r2": { "type": "review", "settings": {} },
+        "r3": { "type": "review", "settings": {} }
+      },
+      "block_order": ["r1","r2","r3"]
+    },
+    "newsletter": {
+      "type": "newsletter",
+      "settings": {}
+    }
+  },
+  "order": [
+    "hero",
+    "trust",
+    "new-arrivals",
+    "featured-collections",
+    "best-sellers",
+    "why-tsukie",
+    "reviews",
+    "newsletter"
+  ]
+}

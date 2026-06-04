@@ -1,0 +1,12 @@
+{
+  "sections": {
+    "main-search": {
+      "type": "main-search",
+      "settings": {
+        "search_type": "product,article,page",
+        "results_per_page": 24
+      }
+    }
+  },
+  "order": ["main-search"]
+}

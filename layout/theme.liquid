@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="{{ request.locale.iso_code }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, height=device-height">
+  <meta name="theme-color" content="{{ settings.color_charcoal | default: '#2A2520' }}">
+
+  <title>
+    {%- if page_title == blank -%}{{ shop.name }}{%- else -%}{{ page_title }} – {{ shop.name }}{%- endif -%}
+  </title>
+
+  {%- if page_description -%}
+    <meta name="description" content="{{ page_description | escape }}">
+  {%- endif -%}
+
+  <link rel="canonical" href="{{ canonical_url }}">
+
+  {%- if settings.favicon != blank -%}
+    <link rel="icon" type="image/png" href="{{ settings.favicon | image_url: width: 32, height: 32 }}">
+  {%- endif -%}
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+
+  {%- if settings.heading_font != blank -%}
+    {{ settings.heading_font | font_face: font_display: 'swap' }}
+  {%- endif -%}
+  {%- if settings.body_font != blank -%}
+    {{ settings.body_font | font_face: font_display: 'swap' }}
+  {%- endif -%}
+
+  {{ content_for_header }}
+
+  {%- liquid
+    assign color_cream     = settings.color_cream          | default: '#F8F4EE'
+    assign color_ivory     = settings.color_ivory          | default: '#F2EDE5'
+    assign color_warm      = settings.color_warm_white     | default: '#FDFAF6'
+    assign color_sand      = settings.color_sand           | default: '#E8DFD2'
+    assign color_tan       = settings.color_tan            | default: '#C9B99A'
+    assign color_charcoal  = settings.color_charcoal       | default: '#2A2520'
+    assign color_muted     = settings.color_muted_brown    | default: '#6B5D52'
+    assign color_gold      = settings.color_accent_gold    | default: '#C4A882'
+    assign color_rust      = settings.color_accent_rust    | default: '#9B6E4E'
+    assign color_text      = settings.color_text           | default: color_charcoal
+    assign color_bg        = settings.color_background     | default: color_warm
+    assign color_btn_p     = settings.color_primary_button | default: color_charcoal
+    assign color_btn_pt    = settings.color_primary_button_text | default: color_cream
+    assign color_btn_s     = settings.color_secondary_button | default: 'transparent'
+    assign color_btn_st    = settings.color_secondary_button_text | default: color_charcoal
+    assign color_sale      = settings.color_sale_badge     | default: color_rust
+    assign color_borders   = settings.color_borders        | default: color_sand
+
+    assign font_size       = settings.base_size            | default: 14
+    assign spacing_sc      = settings.spacing_scale        | default: 1
+    assign grid_h          = settings.grid_horizontal      | default: 24
+    assign grid_v          = settings.grid_vertical        | default: 28
+    assign btn_radius      = settings.border_radius        | default: 0
+    assign btn_thick       = settings.border_thickness     | default: 1
+    assign btn_shadow      = settings.shadow               | default: 'none'
+    assign max_width       = settings.page_width           | default: 1400
+  -%}
+
+  <style>
+    :root {
+      --cream: {{ color_cream }};
+      --ivory: {{ color_ivory }};
+      --warm-white: {{ color_bg }};
+      --sand: {{ color_sand }};
+      --tan: {{ color_tan }};
+      --nude: #B89E83;
+      --charcoal: {{ color_charcoal }};
+      --dark-brown: #3D3228;
+      --muted-brown: {{ color_muted }};
+      --accent-gold: {{ color_gold }};
+      --accent-rust: {{ color_rust }};
+      
+      --color-text: {{ color_text }};
+      --color-background: {{ color_bg }};
+      --color-primary-button: {{ color_btn_p }};
+      --color-primary-button-text: {{ color_btn_pt }};
+      --color-secondary-button: {{ color_btn_s }};
+      --color-secondary-button-text: {{ color_btn_st }};
+      --color-sale-badge: {{ color_sale }};
+      --color-borders: {{ color_borders }};
+
+      {%- if settings.heading_font != blank -%}
+        --font-serif: {{ settings.heading_font.family }}, 'Cormorant Garamond', Georgia, serif;
+      {%- else -%}
+        --font-serif: 'Cormorant Garamond', Georgia, serif;
+      {%- endif -%}
+      {%- if settings.body_font != blank -%}
+        --font-sans: {{ settings.body_font.family }}, 'Jost', sans-serif;
+      {%- else -%}
+        --font-sans: 'Jost', sans-serif;
+      {%- endif -%}
+
+      --font-size-base: {{ font_size }}px;
+      --btn-radius: {{ btn_radius }}px;
+      --btn-border-thickness: {{ btn_thick }}px;
+      --btn-shadow: {{ btn_shadow }};
+      --layout-max-width: {{ max_width }}px;
+      --spacing-scale: {{ spacing_sc }};
+      --grid-horizontal: {{ grid_h }}px;
+      --grid-vertical: {{ grid_v }}px;
+      --section-padding: calc(100px * var(--spacing-scale));
+    }
+  </style>
+
+  <link rel="stylesheet" href="{{ 'base.css' | asset_url }}">
+  <link rel="stylesheet" href="{{ 'component-cart-drawer.css' | asset_url }}">
+</head>
+
+<body class="template-{{ template.name | handle }} {% if template.suffix != blank %}template-suffix-{{ template.suffix | handle }}{% endif %}">
+
+  {%- section 'announcement-bar' -%}
+  {%- section 'header' -%}
+
+  <main id="MainContent" role="main" tabindex="-1">
+    {{ content_for_layout }}
+  </main>
+
+  {%- section 'footer' -%}
+
+  <script src="{{ 'global.js' | asset_url }}" defer="defer"></script>
+  <script src="{{ 'product-form.js' | asset_url }}" defer="defer"></script>
+
+</body>
+</html>

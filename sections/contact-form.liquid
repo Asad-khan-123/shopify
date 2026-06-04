@@ -1,0 +1,230 @@
+<section class="contact-section">
+  <div class="contact-inner">
+    {%- render 'breadcrumb' -%}
+    <div class="contact-grid">
+      <div class="contact-info">
+        {%- if section.settings.eyebrow != blank -%}
+          <p class="section-eyebrow" style="text-align:left;">{{ section.settings.eyebrow }}</p>
+        {%- endif -%}
+        <h1 class="contact-title">{{ section.settings.heading }}</h1>
+        {%- if section.settings.subtext != blank -%}
+          <p class="contact-subtext">{{ section.settings.subtext }}</p>
+        {%- endif -%}
+
+        {%- for block in section.blocks -%}
+          {%- if block.type == 'info_item' -%}
+            <div class="contact-info-item" {{ block.shopify_attributes }}>
+              {%- if block.settings.label != blank -%}
+                <span class="contact-info-label">{{ block.settings.label }}</span>
+              {%- endif -%}
+              {%- if block.settings.value != blank -%}
+                <span class="contact-info-value">{{ block.settings.value }}</span>
+              {%- endif -%}
+            </div>
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+
+      <div class="contact-form-wrap">
+        {%- form 'contact', id: 'ContactForm', class: 'contact-form' -%}
+          {%- if form.posted_successfully? -%}
+            <div class="form-success" role="alert">
+              {{ 'sections.contact_form.success' | t }}
+            </div>
+          {%- endif -%}
+
+          {%- if form.errors -%}
+            <div class="form-error" role="alert">
+              {{ form.errors | default_errors }}
+            </div>
+          {%- endif -%}
+
+          <div class="contact-form-row">
+            <div class="form-field">
+              <label class="form-label" for="ContactForm-name">{{ section.settings.label_name }}</label>
+              <input
+                type="text"
+                id="ContactForm-name"
+                name="contact[name]"
+                class="form-input"
+                value="{% if form.name %}{{ form.name }}{% elsif customer %}{{ customer.name }}{% endif %}"
+                autocomplete="name"
+                placeholder="{{ section.settings.placeholder_name }}"
+                required
+              >
+            </div>
+            <div class="form-field">
+              <label class="form-label" for="ContactForm-email">{{ section.settings.label_email }}</label>
+              <input
+                type="email"
+                id="ContactForm-email"
+                name="contact[email]"
+                class="form-input"
+                value="{% if form.email %}{{ form.email }}{% elsif customer %}{{ customer.email }}{% endif %}"
+                autocomplete="email"
+                autocorrect="off"
+                autocapitalize="off"
+                placeholder="{{ section.settings.placeholder_email }}"
+                required
+              >
+            </div>
+          </div>
+
+          {%- if section.settings.show_phone -%}
+            <div class="form-field">
+              <label class="form-label" for="ContactForm-phone">{{ section.settings.label_phone }}</label>
+              <input
+                type="tel"
+                id="ContactForm-phone"
+                name="contact[phone]"
+                class="form-input"
+                value="{% if form.phone %}{{ form.phone }}{% endif %}"
+                autocomplete="tel"
+                placeholder="{{ section.settings.placeholder_phone }}"
+              >
+            </div>
+          {%- endif -%}
+
+          <div class="form-field">
+            <label class="form-label" for="ContactForm-message">{{ section.settings.label_message }}</label>
+            <textarea
+              id="ContactForm-message"
+              name="contact[body]"
+              class="form-textarea"
+              rows="6"
+              placeholder="{{ section.settings.placeholder_message }}"
+              required
+            >
+              {%- if form.body -%}{{ form.body }}{%- endif -%}
+            </textarea>
+          </div>
+
+          <button type="submit" class="btn-primary">
+            {{ section.settings.submit_label }}
+          </button>
+        {%- endform -%}
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .contact-section { padding: 60px 40px 100px; }
+  .contact-inner { max-width: var(--layout-max-width, 1400px); margin: 0 auto; }
+  .contact-grid { display: grid; grid-template-columns: 1fr 1.6fr; gap: 80px; align-items: start; margin-top: 48px; }
+  .contact-title { font-family: var(--font-serif); font-size: clamp(32px, 4vw, 52px); font-weight: 300; color: var(--charcoal); margin-bottom: 20px; line-height: 1.05; }
+  .contact-subtext { font-size: 15px; color: var(--muted-brown); line-height: 1.9; margin-bottom: 40px; font-weight: 300; }
+  .contact-info-item { margin-bottom: 28px; }
+  .contact-info-label { display: block; font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--accent-gold); font-weight: 400; margin-bottom: 6px; }
+  .contact-info-value { font-size: 15px; color: var(--charcoal); }
+  .contact-form { display: flex; flex-direction: column; gap: 0; }
+  .contact-form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  @media (max-width: 1024px) {
+    .contact-grid { grid-template-columns: 1fr; gap: 48px; }
+  }
+  @media (max-width: 768px) {
+    .contact-section { padding: 40px 20px 60px; }
+    .contact-form-row { grid-template-columns: 1fr; gap: 0; }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Contact Form",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow Text"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading"
+    },
+    {
+      "type": "textarea",
+      "id": "subtext",
+      "label": "Subtext"
+    },
+    {
+      "type": "header",
+      "content": "Form Labels"
+    },
+    {
+      "type": "text",
+      "id": "label_name",
+      "label": "Name Label"
+    },
+    {
+      "type": "text",
+      "id": "placeholder_name",
+      "label": "Name Placeholder"
+    },
+    {
+      "type": "text",
+      "id": "label_email",
+      "label": "Email Label"
+    },
+    {
+      "type": "text",
+      "id": "placeholder_email",
+      "label": "Email Placeholder"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_phone",
+      "label": "Show Phone Field",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "label_phone",
+      "label": "Phone Label"
+    },
+    {
+      "type": "text",
+      "id": "placeholder_phone",
+      "label": "Phone Placeholder"
+    },
+    {
+      "type": "text",
+      "id": "label_message",
+      "label": "Message Label"
+    },
+    {
+      "type": "text",
+      "id": "placeholder_message",
+      "label": "Message Placeholder"
+    },
+    {
+      "type": "text",
+      "id": "submit_label",
+      "label": "Submit Button Label"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "info_item",
+      "name": "Contact Info Item",
+      "settings": [
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Label"
+        },
+        {
+          "type": "text",
+          "id": "value",
+          "label": "Value"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Contact Form"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,33 @@
+{
+  "sections": {
+    "main-product": {
+      "type": "main-product",
+      "blocks": {
+        "trust1": { "type": "trust_item", "settings": {} },
+        "trust2": { "type": "trust_item", "settings": {} },
+        "trust3": { "type": "trust_item", "settings": {} },
+        "accordion-details": {
+          "type": "accordion",
+          "settings": { "heading": "Product Details" }
+        },
+        "accordion-shipping": {
+          "type": "accordion",
+          "settings": { "heading": "Shipping & Returns" }
+        },
+        "accordion-care": {
+          "type": "accordion",
+          "settings": { "heading": "Care Instructions" }
+        }
+      },
+      "block_order": ["trust1","trust2","trust3","accordion-details","accordion-shipping","accordion-care"],
+      "settings": {
+        "show_reviews": true,
+        "show_buy_now": true,
+        "show_related": true,
+        "low_stock_threshold": 5
+      }
+    }
+  },
+  "order": ["main-product"]
+}
+

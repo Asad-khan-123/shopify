@@ -1,0 +1,90 @@
+{%- if customer -%}
+<div class="customer-section">
+  <div class="customer-inner customer-inner--wide">
+    {%- render 'breadcrumb' -%}
+    <div class="account-header">
+      <div>
+        <h1 class="customer-page-title">{{ section.settings.heading | default: 'customer.account.title' | t }}</h1>
+        <p class="customer-page-sub">{{ customer.first_name }} {{ customer.last_name }} · {{ customer.email }}</p>
+      </div>
+      <a href="{{ routes.account_logout_url }}" class="btn-ghost account-logout">{{ section.settings.logout_label | default: 'customer.account.logout' | t }}</a>
+    </div>
+
+    <div class="account-nav">
+      <a href="{{ routes.account_url }}" class="account-nav-link active">{{ section.settings.orders_label | default: 'customer.account.order_history' | t }}</a>
+      <a href="{{ routes.account_addresses_url }}" class="account-nav-link">{{ section.settings.addresses_label | default: 'customer.addresses.title' | t }}</a>
+    </div>
+
+    {%- if customer.orders.size > 0 -%}
+      <div class="table-wrap">
+        <table class="customer-table">
+          <thead>
+            <tr>
+              <th>{{ section.settings.col_order }}</th>
+              <th>{{ section.settings.col_date }}</th>
+              <th>{{ section.settings.col_status }}</th>
+              <th>{{ section.settings.col_total }}</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {%- for order in customer.orders -%}
+              <tr>
+                <td>{{ order.name }}</td>
+                <td>{{ order.created_at | date: '%B %d, %Y' }}</td>
+                <td>
+                  <span class="order-badge order-badge--{{ order.fulfillment_status }}">{{ order.fulfillment_status_label }}</span>
+                </td>
+                <td>{{ order.total_price | money }}</td>
+                <td><a href="{{ order.customer_url }}" class="order-view-link">{{ section.settings.col_view }}</a></td>
+              </tr>
+            {%- endfor -%}
+          </tbody>
+        </table>
+      </div>
+    {%- else -%}
+      <div class="account-empty">
+        <p class="account-empty-text">{{ section.settings.no_orders_text }}</p>
+        {%- if section.settings.shop_btn_label != blank -%}
+          <a href="{{ routes.all_products_collection_url }}" class="btn-primary">{{ section.settings.shop_btn_label }}</a>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+  </div>
+</div>
+
+<style>
+  .account-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; margin-bottom: 32px; flex-wrap: wrap; }
+  .account-logout { font-size: 11px; }
+  .account-nav { display: flex; gap: 0; border-bottom: 1px solid var(--sand); margin-bottom: 40px; }
+  .account-nav-link { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--muted-brown); padding: 14px 24px; border-bottom: 2px solid transparent; text-decoration: none; transition: all 0.2s; display: block; }
+  .account-nav-link:hover, .account-nav-link.active { color: var(--charcoal); border-bottom-color: var(--charcoal); }
+  .table-wrap { overflow-x: auto; }
+  .order-badge { display: inline-block; padding: 3px 10px; font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; border-radius: 2px; }
+  .order-badge--fulfilled { background: rgba(74,124,89,0.1); color: #4a7c59; }
+  .order-badge--unfulfilled { background: rgba(196,168,130,0.15); color: var(--accent-gold); }
+  .order-badge--partial { background: rgba(155,110,78,0.1); color: var(--accent-rust); }
+  .order-view-link { font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--accent-rust); text-decoration: underline; text-underline-offset: 3px; }
+  .account-empty { text-align: center; padding: 60px 20px; }
+  .account-empty-text { font-size: 15px; color: var(--muted-brown); margin-bottom: 28px; }
+</style>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Account",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading" },
+    { "type": "text", "id": "logout_label", "label": "Logout Label" },
+    { "type": "text", "id": "orders_label", "label": "Orders Tab Label" },
+    { "type": "text", "id": "addresses_label", "label": "Addresses Tab Label" },
+    { "type": "text", "id": "col_order", "label": "Order Column Header" },
+    { "type": "text", "id": "col_date", "label": "Date Column Header" },
+    { "type": "text", "id": "col_status", "label": "Status Column Header" },
+    { "type": "text", "id": "col_total", "label": "Total Column Header" },
+    { "type": "text", "id": "col_view", "label": "View Link Text" },
+    { "type": "text", "id": "no_orders_text", "label": "No Orders Text" },
+    { "type": "text", "id": "shop_btn_label", "label": "Shop Button Label" }
+  ]
+}
+{% endschema %}

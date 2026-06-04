@@ -1,0 +1,55 @@
+<div class="customer-section">
+  <div class="customer-inner">
+    {%- render 'breadcrumb' -%}
+    <h1 class="customer-page-title">{{ section.settings.heading | default: 'customer.login.title' | t }}</h1>
+    <p class="customer-page-sub">{{ section.settings.subtext }}</p>
+
+    {%- form 'customer_login', id: 'customer_login', class: 'customer-form' -%}
+      {%- if form.errors -%}
+        <div class="form-error" role="alert">{{ form.errors | default_errors }}</div>
+      {%- endif -%}
+      <div class="form-field">
+        <label class="form-label" for="CustomerEmail">{{ section.settings.email_label | default: 'customer.login.email_label' | t }}</label>
+        <input type="email" name="customer[email]" id="CustomerEmail" class="form-input" autocomplete="email" autocorrect="off" autocapitalize="off" placeholder="{{ section.settings.email_placeholder }}" {% if form.email %}value="{{ form.email }}"{% endif %} required>
+      </div>
+      <div class="form-field">
+        <label class="form-label" for="CustomerPassword">{{ section.settings.password_label | default: 'customer.login.password_label' | t }}</label>
+        <input type="password" name="customer[password]" id="CustomerPassword" class="form-input" autocomplete="current-password" placeholder="{{ section.settings.password_placeholder }}" required>
+      </div>
+      <div class="customer-links">
+        <a href="/account/forgot_password" class="customer-forgot-link">{{ section.settings.forgot_link | default: 'customer.login.forgot_password' | t }}</a>
+      </div>
+      <button type="submit" class="btn-primary">{{ section.settings.submit_label | default: 'customer.login.submit' | t }}</button>
+      <p class="customer-register-link">
+        {{ section.settings.new_customer_text }}
+        <a href="{{ routes.account_register_url }}">{{ section.settings.register_link | default: 'customer.login.create_account' | t }}</a>
+      </p>
+    {%- endform -%}
+  </div>
+</div>
+
+<style>
+  .customer-form { display: flex; flex-direction: column; gap: 0; }
+  .customer-forgot-link { font-size: 12px; color: var(--accent-rust); text-decoration: underline; text-underline-offset: 3px; }
+  .customer-register-link { font-size: 13px; color: var(--muted-brown); margin-top: 20px; text-align: center; }
+  .customer-register-link a { color: var(--accent-rust); text-decoration: underline; text-underline-offset: 3px; }
+  .customer-form .btn-primary { margin-top: 8px; width: 100%; }
+</style>
+
+{% schema %}
+{
+  "name": "Login",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Page Heading" },
+    { "type": "text", "id": "subtext", "label": "Subtext" },
+    { "type": "text", "id": "email_label", "label": "Email Label" },
+    { "type": "text", "id": "email_placeholder", "label": "Email Placeholder" },
+    { "type": "text", "id": "password_label", "label": "Password Label" },
+    { "type": "text", "id": "password_placeholder", "label": "Password Placeholder" },
+    { "type": "text", "id": "forgot_link", "label": "Forgot Password Link Text" },
+    { "type": "text", "id": "submit_label", "label": "Sign In Button Label" },
+    { "type": "text", "id": "new_customer_text", "label": "New Customer Text" },
+    { "type": "text", "id": "register_link", "label": "Register Link Text" }
+  ]
+}
+{% endschema %}

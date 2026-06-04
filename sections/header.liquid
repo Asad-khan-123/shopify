@@ -1,0 +1,345 @@
+{%- liquid
+  assign search_enabled = section.settings.enable_search
+  assign cart_label = settings.nav_cart_label | default: 'Bag'
+  assign account_label = settings.nav_account_label | default: 'Account'
+  assign home_label = settings.nav_home_label | default: ''
+-%}
+
+<header class="site-header" style="
+  --nav-height: {{ section.settings.nav_height }}px;
+  --nav-bg: {{ section.settings.nav_background }};
+  --nav-text: {{ section.settings.nav_text_color }};
+">
+  <nav class="nav-main" role="navigation">
+    <div class="nav-left">
+      {%- if section.settings.show_menu -%}
+        <button class="nav-menu-toggle" data-toggle-menu aria-label="Menu">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <line x1="3" y1="6" x2="21" y2="6" />
+            <line x1="3" y1="12" x2="21" y2="12" />
+            <line x1="3" y1="18" x2="21" y2="18" />
+          </svg>
+        </button>
+      {%- endif -%}
+
+      {%- if linklists[section.settings.main_menu_linklist].links.size > 0 -%}
+        <ul class="nav-links" role="list">
+          {%- for link in linklists[section.settings.main_menu_linklist].links -%}
+            <li>
+              <a href="{{ link.url }}" class="nav-link" {% if link.active %}aria-current="page"{% endif %}>
+                {{ link.title }}
+              </a>
+            </li>
+          {%- endfor -%}
+        </ul>
+      {%- endif -%}
+    </div>
+
+    <a href="/" class="nav-logo" aria-label="{{ shop.name }}">{{ shop.name }}</a>
+
+    <div class="nav-right">
+      {%- if search_enabled -%}
+        <button class="nav-icon" data-toggle-search aria-label="Search">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <circle cx="11" cy="11" r="8" />
+            <path d="m21 21-4.35-4.35" />
+          </svg>
+        </button>
+      {%- endif -%}
+
+      {%- if shop.customer_accounts_enabled -%}
+        <a href="/account" class="nav-icon" aria-label="{{ account_label }}">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+            <circle cx="12" cy="7" r="4" />
+          </svg>
+        </a>
+      {%- endif -%}
+
+      <a href="{{ routes.cart_url }}" class="nav-icon nav-cart" aria-label="{{ cart_label }}">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
+          <line x1="3" y1="6" x2="21" y2="6" />
+          <path d="M16 10a4 4 0 0 1-8 0" />
+        </svg>
+        <span class="nav-cart-label">{{ cart_label }}</span>
+        <span class="nav-cart-count" data-cart-count style="display: none;">0</span>
+      </a>
+    </div>
+  </nav>
+
+  {%- if search_enabled -%}
+    <div class="nav-search" data-mobile-search>
+      <form action="/search" method="get" class="search-form" role="search">
+        <input 
+          type="search" 
+          name="q" 
+          placeholder="{{ settings.nav_search_placeholder | default: 'Search...' }}"
+          class="search-input"
+          autocomplete="off"
+        >
+        <button type="submit" class="search-submit" aria-label="Search">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <circle cx="11" cy="11" r="8" />
+            <path d="m21 21-4.35-4.35" />
+          </svg>
+        </button>
+      </form>
+    </div>
+  {%- endif -%}
+</header>
+
+{%- if section.settings.show_menu -%}
+  <div class="nav-mobile-menu" data-mobile-menu role="navigation">
+    {%- if linklists[section.settings.main_menu_linklist].links.size > 0 -%}
+      <ul class="nav-mobile-links" role="list">
+        {%- for link in linklists[section.settings.main_menu_linklist].links -%}
+          <li>
+            <a href="{{ link.url }}" class="nav-mobile-link">{{ link.title }}</a>
+          </li>
+        {%- endfor -%}
+      </ul>
+    {%- endif -%}
+  </div>
+{%- endif -%}
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--nav-bg, var(--color-warm-white));
+    color: var(--nav-text, var(--color-charcoal));
+    border-bottom: 1px solid var(--color-sand);
+  }
+
+  .nav-main {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: var(--nav-height, 72px);
+    padding: 0 40px;
+    gap: 24px;
+  }
+
+  .nav-left {
+    display: flex;
+    align-items: center;
+    gap: 36px;
+    flex: 1;
+  }
+
+  .nav-menu-toggle {
+    display: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: currentColor;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 36px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .nav-link {
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-weight: 400;
+    transition: color 0.25s;
+  }
+
+  .nav-link:hover {
+    color: var(--color-accent-rust);
+  }
+
+  .nav-logo {
+    font-family: var(--font-serif);
+    font-size: 28px;
+    font-weight: 500;
+    letter-spacing: 6px;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .nav-right {
+    display: flex;
+    gap: 24px;
+    align-items: center;
+  }
+
+  .nav-icon {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: color 0.25s;
+  }
+
+  .nav-icon:hover {
+    color: var(--color-accent-rust);
+  }
+
+  .nav-cart-count {
+    background: var(--color-accent-rust);
+    color: var(--color-cream);
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: 600;
+    margin-left: -8px;
+  }
+
+  .nav-search {
+    background: var(--color-ivory);
+    padding: 12px 40px;
+    border-bottom: 1px solid var(--color-sand);
+    display: none;
+  }
+
+  .nav-search.active {
+    display: block;
+  }
+
+  .search-form {
+    display: flex;
+    gap: 8px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .search-input {
+    flex: 1;
+    background: var(--color-warm-white);
+    border: 1px solid var(--color-sand);
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+
+  .search-submit {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--color-charcoal);
+    padding: 8px 12px;
+  }
+
+  .nav-mobile-menu {
+    display: none;
+    background: var(--color-warm-white);
+    border-bottom: 1px solid var(--color-sand);
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+  }
+
+  .nav-mobile-menu.active {
+    display: block;
+    max-height: 500px;
+  }
+
+  .nav-mobile-links {
+    list-style: none;
+    margin: 0;
+    padding: 16px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .nav-mobile-link {
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-weight: 400;
+    display: block;
+    padding: 8px 0;
+  }
+
+  @media (max-width: 768px) {
+    .nav-main {
+      padding: 0 20px;
+      gap: 16px;
+    }
+
+    .nav-left {
+      gap: 16px;
+      flex: 1;
+    }
+
+    .nav-menu-toggle {
+      display: block;
+    }
+
+    .nav-links {
+      display: none;
+    }
+
+    .nav-right {
+      gap: 16px;
+    }
+
+    .nav-search {
+      padding: 12px 20px;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Header",
+  "settings": [
+    {
+      "type": "link_list",
+      "id": "main_menu_linklist",
+      "label": "Main Menu",
+      "default": "main-menu"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_menu",
+      "label": "Show Mobile Menu",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_search",
+      "label": "Enable Search",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "nav_height",
+      "label": "Navigation Height",
+      "min": 60,
+      "max": 100,
+      "step": 4,
+      "default": 72,
+      "unit": "px"
+    },
+    {
+      "type": "color",
+      "id": "nav_background",
+      "label": "Background Color",
+      "default": "#FDFAF6"
+    },
+    {
+      "type": "color",
+      "id": "nav_text_color",
+      "label": "Text Color",
+      "default": "#2A2520"
+    }
+  ]
+}
+{% endschema %}

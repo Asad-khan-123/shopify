@@ -1,0 +1,11 @@
+{
+  "sections": {
+    "main-page": {
+      "type": "main-page",
+      "settings": {
+        "show_sidebar": false
+      }
+    }
+  },
+  "order": ["main-page"]
+}

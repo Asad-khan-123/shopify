@@ -1,0 +1,131 @@
+{%- if customer -%}
+<div class="customer-section">
+  <div class="customer-inner customer-inner--wide">
+    {%- render 'breadcrumb' -%}
+    <div class="account-header">
+      <div>
+        <h1 class="customer-page-title">{{ section.settings.heading_prefix }} {{ order.name }}</h1>
+        <p class="customer-page-sub">{{ section.settings.date_prefix }} {{ order.created_at | date: '%B %d, %Y' }} · {{ order.financial_status_label }} · {{ order.fulfillment_status_label }}</p>
+      </div>
+      <a href="{{ routes.account_url }}" class="btn-ghost">{{ section.settings.back_label }}</a>
+    </div>
+
+    <table class="customer-table order-table">
+      <thead>
+        <tr>
+          <th>{{ section.settings.col_product }}</th>
+          <th>{{ section.settings.col_sku }}</th>
+          <th>{{ section.settings.col_price }}</th>
+          <th>{{ section.settings.col_qty }}</th>
+          <th>{{ section.settings.col_total }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {%- for line_item in order.line_items -%}
+          <tr>
+            <td>
+              <div class="order-item">
+                {%- if line_item.image != blank -%}
+                  <img src="{{ line_item.image | image_url: width: 80 }}" alt="{{ line_item.title | escape }}" width="60" height="75" loading="lazy" class="order-item-img">
+                {%- endif -%}
+                <div>
+                  <strong>{{ line_item.title | escape }}</strong>
+                  {%- unless line_item.variant.title == 'Default Title' -%}
+                    <div style="font-size:11px; color: var(--tan); margin-top: 4px;">{{ line_item.variant.title }}</div>
+                  {%- endunless -%}
+                </div>
+              </div>
+            </td>
+            <td>{{ line_item.sku | default: '—' }}</td>
+            <td>{{ line_item.original_price | money }}</td>
+            <td>{{ line_item.quantity }}</td>
+            <td>{{ line_item.original_line_price | money }}</td>
+          </tr>
+        {%- endfor -%}
+      </tbody>
+    </table>
+
+    <div class="order-summary">
+      <div class="order-summary-row">
+        <span>{{ section.settings.label_subtotal }}</span>
+        <span>{{ order.line_items_subtotal_price | money }}</span>
+      </div>
+      {%- if order.cart_level_discount_applications.size > 0 -%}
+        {%- for discount in order.cart_level_discount_applications -%}
+          <div class="order-summary-row order-summary-row--discount">
+            <span>{{ discount.title }}</span>
+            <span>-{{ discount.total_allocated_amount | money }}</span>
+          </div>
+        {%- endfor -%}
+      {%- endif -%}
+      {%- for shipping_method in order.shipping_methods -%}
+        <div class="order-summary-row">
+          <span>{{ section.settings.label_shipping }}: {{ shipping_method.title }}</span>
+          <span>{{ shipping_method.price | money }}</span>
+        </div>
+      {%- endfor -%}
+      {%- for tax_line in order.tax_lines -%}
+        <div class="order-summary-row">
+          <span>{{ section.settings.label_tax }}: {{ tax_line.title }} ({{ tax_line.rate | times: 100 }}%)</span>
+          <span>{{ tax_line.price | money }}</span>
+        </div>
+      {%- endfor -%}
+      <div class="order-summary-row order-summary-row--total">
+        <strong>{{ section.settings.label_total }}</strong>
+        <strong>{{ order.total_price | money }}</strong>
+      </div>
+    </div>
+
+    <div class="order-addresses">
+      {%- if order.billing_address -%}
+        <div class="order-address-block">
+          <h3 class="order-address-title">{{ section.settings.billing_label }}</h3>
+          {{ order.billing_address | format_address }}
+        </div>
+      {%- endif -%}
+      {%- if order.shipping_address -%}
+        <div class="order-address-block">
+          <h3 class="order-address-title">{{ section.settings.shipping_label }}</h3>
+          {{ order.shipping_address | format_address }}
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+</div>
+
+<style>
+  .account-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 40px; gap: 24px; flex-wrap: wrap; }
+  .order-item { display: flex; align-items: center; gap: 16px; }
+  .order-item-img { object-fit: cover; flex-shrink: 0; }
+  .order-summary { max-width: 400px; margin-left: auto; margin-top: 32px; padding: 24px; border: 1px solid var(--sand); }
+  .order-summary-row { display: flex; justify-content: space-between; padding: 8px 0; font-size: 13px; color: var(--muted-brown); border-bottom: 1px solid rgba(232,223,210,0.4); }
+  .order-summary-row--discount { color: var(--accent-rust); }
+  .order-summary-row--total { font-size: 16px; color: var(--charcoal); padding-top: 16px; border-top: 1px solid var(--charcoal); border-bottom: none; }
+  .order-addresses { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-top: 60px; }
+  .order-address-title { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--accent-gold); margin-bottom: 16px; }
+  .order-addresses address { font-style: normal; font-size: 14px; color: var(--muted-brown); line-height: 1.8; }
+  @media (max-width: 768px) { .order-addresses { grid-template-columns: 1fr; gap: 24px; } .order-summary { max-width: 100%; } }
+</style>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Order",
+  "settings": [
+    { "type": "text", "id": "heading_prefix", "label": "Order Heading Prefix" },
+    { "type": "text", "id": "date_prefix", "label": "Date Prefix Text" },
+    { "type": "text", "id": "back_label", "label": "Back Link Label" },
+    { "type": "text", "id": "col_product", "label": "Product Column" },
+    { "type": "text", "id": "col_sku", "label": "SKU Column" },
+    { "type": "text", "id": "col_price", "label": "Price Column" },
+    { "type": "text", "id": "col_qty", "label": "Qty Column" },
+    { "type": "text", "id": "col_total", "label": "Total Column" },
+    { "type": "text", "id": "label_subtotal", "label": "Subtotal Label" },
+    { "type": "text", "id": "label_shipping", "label": "Shipping Label" },
+    { "type": "text", "id": "label_tax", "label": "Tax Label" },
+    { "type": "text", "id": "label_total", "label": "Total Label" },
+    { "type": "text", "id": "billing_label", "label": "Billing Address Label" },
+    { "type": "text", "id": "shipping_label", "label": "Shipping Address Label" }
+  ]
+}
+{% endschema %}

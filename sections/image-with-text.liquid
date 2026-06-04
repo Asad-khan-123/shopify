@@ -1,0 +1,261 @@
+<section class="image-text-section" style="background: {{ section.settings.bg_color }};">
+  <div class="image-text-inner">
+    <div class="image-text-grid {% if section.settings.image_position == 'right' %}image-text-grid--reversed{% endif %}">
+      {%- comment %} Media {%- endcomment -%}
+      <div class="image-text__media">
+        {%- if section.settings.video != blank -%}
+          <video
+            src="{{ section.settings.video }}"
+            class="image-text__video"
+            autoplay
+            muted
+            loop
+            playsinline
+          ></video>
+        {%- elsif section.settings.image != blank -%}
+          <img
+            src="{{ section.settings.image | image_url: width: 900 }}"
+            alt="{{ section.settings.image.alt | escape | default: section.settings.heading | escape }}"
+            class="image-text__img"
+            width="900"
+            height="1125"
+            loading="lazy"
+          >
+        {%- else -%}
+          {{ 'lifestyle-1' | placeholder_svg_tag: 'image-text__placeholder' }}
+        {%- endif -%}
+      </div>
+
+      {%- comment %} Content {%- endcomment -%}
+      <div class="image-text__content" style="
+        text-align: {{ section.settings.text_align }};
+        align-items: {% if section.settings.text_align == 'left' %}flex-start{% elsif section.settings.text_align == 'right' %}flex-end{% else %}center{% endif %};
+        justify-content: center;
+      ">
+        {%- if section.settings.eyebrow != blank -%}
+          <p class="section-eyebrow" style="color: {{ section.settings.eyebrow_color }};">{{ section.settings.eyebrow }}</p>
+        {%- endif -%}
+
+        {%- if section.settings.heading != blank -%}
+          <h2 class="image-text__heading" style="color: {{ section.settings.heading_color }};">{{ section.settings.heading }}</h2>
+        {%- endif -%}
+
+        {%- if section.settings.text != blank -%}
+          <div class="image-text__text rte" style="color: {{ section.settings.text_color }};">{{ section.settings.text }}</div>
+        {%- endif -%}
+
+        {%- for block in section.blocks -%}
+          {%- if block.type == 'feature' -%}
+            <div class="image-text__feature" {{ block.shopify_attributes }}>
+              {%- if block.settings.icon != blank -%}
+                <span class="image-text__feature-icon">{{ block.settings.icon }}</span>
+              {%- endif -%}
+              <div>
+                {%- if block.settings.title != blank -%}
+                  <p class="image-text__feature-title">{{ block.settings.title }}</p>
+                {%- endif -%}
+                {%- if block.settings.text != blank -%}
+                  <p class="image-text__feature-text">{{ block.settings.text }}</p>
+                {%- endif -%}
+              </div>
+            </div>
+          {%- endif -%}
+        {%- endfor -%}
+
+        <div class="image-text__ctas">
+          {%- if section.settings.btn_primary_label != blank and section.settings.btn_primary_url != blank -%}
+            <a href="{{ section.settings.btn_primary_url }}" class="btn-primary">{{ section.settings.btn_primary_label }}</a>
+          {%- endif -%}
+          {%- if section.settings.btn_ghost_label != blank and section.settings.btn_ghost_url != blank -%}
+            <a href="{{ section.settings.btn_ghost_url }}" class="btn-ghost">{{ section.settings.btn_ghost_label }}</a>
+          {%- endif -%}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .image-text-section { padding: var(--section-padding, 100px) 40px; overflow: hidden; }
+  .image-text-inner { max-width: var(--layout-max-width); margin: 0 auto; }
+  .image-text-grid {
+    display: grid;
+    grid-template-columns: {{ section.settings.media_width }}fr {{ 10 | minus: section.settings.media_width | append: 'fr' }};
+    gap: {{ section.settings.gap }}px;
+    align-items: center;
+  }
+  .image-text-grid--reversed { direction: rtl; }
+  .image-text-grid--reversed > * { direction: ltr; }
+  .image-text__media { position: relative; overflow: hidden; }
+  .image-text__img { width: 100%; height: 100%; object-fit: cover; display: block; border-radius: {{ section.settings.media_radius }}px; }
+  .image-text__video { width: 100%; display: block; border-radius: {{ section.settings.media_radius }}px; }
+  .image-text__placeholder { width: 100%; height: 500px; }
+  .image-text__content { display: flex; flex-direction: column; gap: 20px; padding: 20px 0; }
+  .image-text__heading { font-family: var(--font-serif); font-size: clamp(28px, 3.5vw, 52px); font-weight: 300; line-height: 1.1; }
+  .image-text__text { font-size: 15px; line-height: 1.9; opacity: 0.8; }
+  .image-text__feature { display: flex; align-items: flex-start; gap: 14px; }
+  .image-text__feature-icon { font-size: 24px; flex-shrink: 0; margin-top: 2px; }
+  .image-text__feature-title { font-family: var(--font-serif); font-size: 18px; font-weight: 400; margin-bottom: 4px; }
+  .image-text__feature-text { font-size: 13px; line-height: 1.7; opacity: 0.75; }
+  .image-text__ctas { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; margin-top: 8px; }
+  @media (max-width: 1024px) {
+    .image-text-grid { grid-template-columns: 1fr; gap: 40px; }
+    .image-text-grid--reversed { direction: ltr; }
+  }
+  @media (max-width: 640px) { .image-text-section { padding: 60px 20px; } }
+</style>
+
+{% schema %}
+{
+  "name": "Image with Text",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image"
+    },
+    {
+      "type": "url",
+      "id": "video",
+      "label": "Video URL (overrides image)"
+    },
+    {
+      "type": "select",
+      "id": "image_position",
+      "label": "Media Position",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "range",
+      "id": "media_width",
+      "label": "Media Width (out of 10)",
+      "min": 3,
+      "max": 7,
+      "step": 1,
+      "default": 5
+    },
+    {
+      "type": "range",
+      "id": "gap",
+      "label": "Gap Between Media and Text",
+      "min": 20,
+      "max": 100,
+      "step": 10,
+      "default": 60,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "media_radius",
+      "label": "Media Border Radius",
+      "min": 0,
+      "max": 24,
+      "step": 2,
+      "default": 0,
+      "unit": "px"
+    },
+    {
+      "type": "select",
+      "id": "text_align",
+      "label": "Text Alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow Text"
+    },
+    {
+      "type": "color",
+      "id": "eyebrow_color",
+      "label": "Eyebrow Color",
+      "default": "#C4A882"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading Color",
+      "default": "#2A2520"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Text"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text Color",
+      "default": "#6B5D52"
+    },
+    {
+      "type": "text",
+      "id": "btn_primary_label",
+      "label": "Primary Button Label"
+    },
+    {
+      "type": "url",
+      "id": "btn_primary_url",
+      "label": "Primary Button URL"
+    },
+    {
+      "type": "text",
+      "id": "btn_ghost_label",
+      "label": "Ghost Button Label"
+    },
+    {
+      "type": "url",
+      "id": "btn_ghost_url",
+      "label": "Ghost Button URL"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Background Color",
+      "default": "#FDFAF6"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "feature",
+      "name": "Feature Item",
+      "settings": [
+        {
+          "type": "text",
+          "id": "icon",
+          "label": "Icon Emoji"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title"
+        },
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "Description"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Image with Text"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,41 @@
+{%- comment -%}
+  Renders product price.
+  Accepts:
+  - product: {Object} Product Liquid object
+  - use_variant: {Boolean} Renders selected or first available variant price
+  - show_badges: {Boolean} Show sale badge
+  - price_class: {String} Optional CSS class
+{%- endcomment -%}
+
+{%- liquid
+  if use_variant
+    assign target = product.selected_or_first_available_variant
+  else
+    assign target = product
+  endif
+
+  assign compare = target.compare_at_price
+  assign current = target.price
+  assign on_sale  = false
+  if compare > current
+    assign on_sale = true
+  endif
+-%}
+
+<div class="price {{ price_class }}" {% if product.selected_or_first_available_variant.available == false %}aria-label="{{ 'products.product.sold_out' | t }}"{% endif %}>
+  {%- if on_sale -%}
+    <span class="price__sale">{{ current | money }}</span>
+    <s class="price__compare">{{ compare | money }}</s>
+    {%- if show_badges -%}
+      {%- liquid
+        assign save_pct = compare | minus: current | times: 100 | divided_by: compare
+      -%}
+      <span class="price__badge-sale">-{{ save_pct }}%</span>
+    {%- endif -%}
+  {%- else -%}
+    <span class="price__regular">{{ current | money }}</span>
+  {%- endif -%}
+  {%- if target.available == false -%}
+    <span class="price__badge-sold-out">{{ 'products.product.sold_out' | t }}</span>
+  {%- endif -%}
+</div>

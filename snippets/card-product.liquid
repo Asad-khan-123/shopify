@@ -1,0 +1,490 @@
+{%- comment -%}
+  card-product.liquid
+  Pixel-perfect match to tsukie-collection.html design.
+
+  Hover behaviour (from original HTML):
+  1. .card-sizes   — cream bg strip with size pills slides up (translateY 100% → 0)
+  2. .card-add-btn — charcoal "Add to Cart" bar slides up after 0.1s delay
+  Both sit inside .product-image-wrap (position: relative, overflow: hidden).
+
+  Sizes are dynamic: loops product.variants for the Size/size option.
+  OOS sizes get .oos class (strikethrough, reduced opacity).
+
+  Accepts:
+    card_product    {Object}  — Product Liquid object (required)
+    show_quick_add  {Boolean} — show add-to-cart hover (default: true)
+    show_colors     {Boolean} — show colour swatches below card (default: false)
+    section_id      {String}  — unique prefix for form IDs
+{%- endcomment -%}
+
+{%- liquid
+  assign product_obj   = card_product | default: product
+  assign show_quick    = show_quick_add | default: true
+  assign show_col      = show_colors    | default: false
+  assign card_form_id  = section_id | append: '-qf-' | append: product_obj.id
+  assign product_url   = product_obj.url
+
+  comment — Find the Size option index —
+  endcomment
+  assign size_option_index = nil
+  for opt in product_obj.options
+    assign opt_down = opt | downcase
+    if opt_down == 'size'
+      assign size_option_index = forloop.index0
+    endif
+  endfor
+
+  comment — Find the Color option index —
+  endcomment
+  assign color_option_index = nil
+  for opt in product_obj.options
+    assign opt_down = opt | downcase
+    if opt_down == 'color' or opt_down == 'colour'
+      assign color_option_index = forloop.index0
+    endif
+  endfor
+
+  comment — Collect unique size values with availability —
+  endcomment
+  assign has_sizes = false
+  if size_option_index != nil
+    assign has_sizes = true
+  endif
+-%}
+
+<article class="product-card" data-product-id="{{ product_obj.id }}">
+
+  {%- comment %} ── IMAGE AREA ── {%- endcomment -%}
+  <a href="{{ product_url }}" class="product-card__image-link" aria-label="{{ product_obj.title | escape }}" tabindex="-1">
+    <div class="product-image-wrap">
+
+      {%- comment %} Main image + hover swap {%- endcomment -%}
+      {%- if product_obj.featured_image != blank -%}
+        <img
+          src="{{ product_obj.featured_image | image_url: width: 600 }}"
+          alt="{{ product_obj.featured_image.alt | escape | default: product_obj.title | escape }}"
+          class="product-img main-img"
+          width="600"
+          height="800"
+          loading="lazy"
+        >
+        {%- if product_obj.images[1] != blank -%}
+          <img
+            src="{{ product_obj.images[1] | image_url: width: 600 }}"
+            alt="{{ product_obj.images[1].alt | escape | default: product_obj.title | escape }}"
+            class="product-img hover-img"
+            width="600"
+            height="800"
+            loading="lazy"
+          >
+        {%- endif -%}
+      {%- else -%}
+        <div class="img-placeholder">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+            <rect x="3" y="3" width="18" height="18" rx="2"/>
+            <circle cx="8.5" cy="8.5" r="1.5"/>
+            <polyline points="21 15 16 10 5 21"/>
+          </svg>
+        </div>
+      {%- endif -%}
+
+      {%- comment %} Badge — sale % / new / sold out {%- endcomment -%}
+      {%- if product_obj.available == false -%}
+        <span class="card-badge badge-sale">{{ 'products.product.sold_out' | t }}</span>
+      {%- elsif product_obj.compare_at_price > product_obj.price -%}
+        {%- liquid
+          assign save_amount = product_obj.compare_at_price | minus: product_obj.price
+          assign save_pct    = save_amount | times: 100 | divided_by: product_obj.compare_at_price
+        -%}
+        <span class="card-badge badge-sale">-{{ save_pct }}%</span>
+      {%- elsif product_obj.tags contains 'new' or product_obj.tags contains 'New' -%}
+        <span class="card-badge badge-new">{{ 'products.product.new' | t }}</span>
+      {%- elsif product_obj.tags contains 'best-seller' or product_obj.tags contains 'Best Seller' -%}
+        <span class="card-badge badge-best">{{ section.settings.bestseller_badge_text | default: 'Best Seller' }}</span>
+      {%- endif -%}
+
+      {%- comment %} Wishlist button (top-right, appears on hover) {%- endcomment -%}
+      <button
+        class="card-wishlist"
+        type="button"
+        data-wishlist="{{ product_obj.id }}"
+        aria-label="{{ 'products.product.wishlist' | t }}"
+      >
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+        </svg>
+      </button>
+
+      {%- comment -%}
+        SIZE STRIP — slides up on hover (cream background)
+        Loops product variants to get unique size values.
+        Marks a size as .oos if NO variant with that size is available.
+        Only shown when product has a Size option.
+      {%- endcomment -%}
+      {%- if show_quick and has_sizes -%}
+        {%- comment %} Variant map: size label → variant ID, used by JS size picker {%- endcomment -%}
+        <script type="application/json" data-variant-map>
+          {
+            {%- assign first_entry = true -%}
+            {%- for variant in product_obj.variants -%}
+              {%- assign this_size = variant.options[size_option_index] -%}
+              {%- unless first_entry -%},{%- endunless -%}
+              {{ this_size | json }}: {{ variant.id }}
+              {%- assign first_entry = false -%}
+            {%- endfor -%}
+          }
+        </script>
+
+        <div class="card-sizes">
+          <span class="sizes-label">{{ section.settings.size_strip_label | default: 'Size' }}</span>
+          {%- liquid
+            assign seen_sizes = ''
+          -%}
+          {%- for variant in product_obj.variants -%}
+            {%- assign this_size = variant.options[size_option_index] -%}
+            {%- unless seen_sizes contains this_size -%}
+              {%- assign seen_sizes = seen_sizes | append: this_size | append: '||' -%}
+              {%- comment %} Check if any variant with this size value is available {%- endcomment -%}
+              {%- assign size_available = false -%}
+              {%- for v in product_obj.variants -%}
+                {%- if v.options[size_option_index] == this_size and v.available -%}
+                  {%- assign size_available = true -%}
+                {%- endif -%}
+              {%- endfor -%}
+              <span
+                class="card-size{% unless size_available %} oos{% endunless %}"
+                data-size="{{ this_size | escape }}"
+                data-product-id="{{ product_obj.id }}"
+                aria-label="{{ this_size }}{% unless size_available %} - {{ 'products.product.sold_out' | t }}{% endunless %}"
+              >{{ this_size }}</span>
+            {%- endunless -%}
+          {%- endfor -%}
+        </div>
+
+        {%- comment %} ADD TO CART bar — slides up after size strip (charcoal bg) {%- endcomment -%}
+        {%- form 'product', product_obj, id: card_form_id, class: 'card-quick-form' -%}
+          <input type="hidden" name="id" value="{{ product_obj.selected_or_first_available_variant.id }}" data-card-variant-id="{{ product_obj.id }}">
+          <button
+            type="submit"
+            name="add"
+            class="card-add-btn"
+            {% if product_obj.available == false %}disabled{% endif %}
+            aria-label="{{ 'products.product.add_to_cart' | t }}: {{ product_obj.title | escape }}"
+          >
+            {%- if product_obj.available -%}
+              {{ 'products.product.add_to_cart' | t }}
+            {%- else -%}
+              {{ 'products.product.sold_out' | t }}
+            {%- endif -%}
+          </button>
+        {%- endform -%}
+
+      {%- elsif show_quick and has_sizes == false -%}
+        {%- comment %} No size option: just show the Add to Cart bar directly {%- endcomment -%}
+        {%- form 'product', product_obj, id: card_form_id, class: 'card-quick-form' -%}
+          <input type="hidden" name="id" value="{{ product_obj.selected_or_first_available_variant.id }}" data-card-variant-id="{{ product_obj.id }}">
+          <button
+            type="submit"
+            name="add"
+            class="card-add-btn"
+            {% if product_obj.available == false %}disabled{% endif %}
+            aria-label="{{ 'products.product.add_to_cart' | t }}: {{ product_obj.title | escape }}"
+          >
+            {%- if product_obj.available -%}
+              {{ 'products.product.add_to_cart' | t }}
+            {%- else -%}
+              {{ 'products.product.sold_out' | t }}
+            {%- endif -%}
+          </button>
+        {%- endform -%}
+      {%- endif -%}
+
+    </div>
+  </a>
+
+  {%- comment %} ── CARD INFO BELOW IMAGE ── {%- endcomment -%}
+  <div class="card-info">
+
+    {%- comment %} Colour swatches (shown always below card when enabled) {%- endcomment -%}
+    {%- if show_col and color_option_index != nil -%}
+      <div class="product-colors">
+        {%- assign seen_colors = '' -%}
+        {%- for variant in product_obj.variants -%}
+          {%- assign this_color = variant.options[color_option_index] -%}
+          {%- unless seen_colors contains this_color -%}
+            {%- assign seen_colors = seen_colors | append: this_color | append: '||' -%}
+            <div class="color-option {% if forloop.first %}selected{% endif %}" data-color="{{ this_color | escape }}">
+              <span class="color-swatch" style="background-color: {{ this_color | downcase | replace: ' ', '' }};"></span>
+              <span class="color-name-tip">{{ this_color }}</span>
+            </div>
+          {%- endunless -%}
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+
+    <a href="{{ product_url }}" class="card-name-link">
+      <h3 class="card-name">{{ product_obj.title | escape }}</h3>
+    </a>
+
+    {%- if product_obj.metafields.custom.subtitle != blank -%}
+      <p class="card-sub">{{ product_obj.metafields.custom.subtitle }}</p>
+    {%- elsif product_obj.product_type != blank -%}
+      <p class="card-sub">{{ product_obj.product_type }}</p>
+    {%- endif -%}
+
+    <div class="card-bottom">
+      <div class="card-price">
+        {%- if product_obj.compare_at_price > product_obj.price -%}
+          <span class="card-price-strike">{{ product_obj.compare_at_price | money }}</span>
+          <span class="card-price-sale">{{ product_obj.price | money }}</span>
+        {%- else -%}
+          <span>{{ product_obj.price | money }}</span>
+        {%- endif -%}
+      </div>
+
+      {%- if product_obj.metafields.reviews.rating != blank -%}
+        <div class="card-rating">
+          <span class="card-stars">★★★★★</span>
+          <span class="card-rcount">({{ product_obj.metafields.reviews.rating_count.value | default: 0 }})</span>
+        </div>
+      {%- endif -%}
+    </div>
+
+  </div>
+</article>
+
+<style>
+  /* ── Card wrapper ── */
+  .product-card { cursor: pointer; }
+  .product-card__image-link { display: block; text-decoration: none; }
+
+  /* ── Image wrap ── */
+  .product-image-wrap {
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: 3 / 4;
+    margin-bottom: 16px;
+    background: var(--ivory);
+  }
+
+  /* ── Images ── */
+  .product-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: opacity 0.45s ease;
+  }
+  .hover-img {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 0.45s ease;
+  }
+  .product-card:hover .main-img { opacity: 0; }
+  .product-card:hover .hover-img { opacity: 1; }
+
+  /* ── Placeholder ── */
+  .img-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--tan);
+    background: var(--ivory);
+  }
+
+  /* ── Badge ── */
+  .card-badge {
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    padding: 5px 12px;
+    font-size: 9px;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    font-weight: 400;
+    z-index: 2;
+  }
+  .badge-new  { background: var(--accent-rust); color: #fff; }
+  .badge-best { background: var(--accent-gold); color: var(--charcoal); }
+  .badge-sale { background: var(--dark-brown);  color: var(--cream); }
+
+  /* ── Wishlist btn ── */
+  .card-wishlist {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    width: 34px;
+    height: 34px;
+    background: rgba(253, 250, 246, 0.9);
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.25s;
+    z-index: 3;
+  }
+  .product-card:hover .card-wishlist { opacity: 1; }
+  .card-wishlist.active svg { fill: var(--accent-rust); stroke: var(--accent-rust); }
+
+  /* ── SIZE STRIP ── (cream bg, slides up on hover) */
+  .card-sizes {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(253, 250, 246, 0.96);
+    padding: 12px 14px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: nowrap;
+    overflow: hidden;
+    transform: translateY(100%);
+    transition: transform 0.3s ease;
+    z-index: 4;
+  }
+  .product-card:hover .card-sizes { transform: translateY(0); }
+
+  .sizes-label {
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--tan);
+    margin-right: 4px;
+    flex-shrink: 0;
+    font-family: var(--font-sans);
+  }
+
+  .card-size {
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    color: var(--muted-brown);
+    cursor: pointer;
+    padding: 4px 8px;
+    border: 1px solid var(--sand);
+    transition: all 0.2s;
+    font-family: var(--font-sans);
+    text-transform: uppercase;
+    text-decoration: none;
+    white-space: nowrap;
+    background: transparent;
+    flex-shrink: 0;
+  }
+  .card-size:hover { border-color: var(--charcoal); color: var(--charcoal); }
+  .card-size.oos { text-decoration: line-through; opacity: 0.4; cursor: default; }
+  .card-size.oos:hover { border-color: var(--sand); color: var(--muted-brown); }
+
+  /* ── ADD TO CART bar ── (charcoal bg, slides up with 0.1s delay) */
+  .card-quick-form {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 3;
+  }
+  .card-add-btn {
+    display: block;
+    width: 100%;
+    background: var(--charcoal);
+    color: var(--cream);
+    text-align: center;
+    padding: 14px;
+    font-family: var(--font-sans);
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    font-weight: 400;
+    border: none;
+    cursor: pointer;
+    transform: translateY(100%);
+    transition: transform 0.3s ease 0.1s;
+  }
+  .product-card:hover .card-add-btn { transform: translateY(0); }
+  .card-add-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  .card-add-btn:not(:disabled):hover {
+    background: var(--accent-rust);
+  }
+
+  /* ── Card info ── */
+  .card-info { padding: 0 2px; }
+  .card-name-link { text-decoration: none; display: block; }
+  .card-name {
+    font-family: var(--font-serif);
+    font-size: 17px;
+    font-weight: 400;
+    color: var(--charcoal);
+    margin-bottom: 4px;
+    line-height: 1.2;
+    transition: color 0.2s;
+  }
+  .card-name-link:hover .card-name { color: var(--accent-rust); }
+
+  .card-sub {
+    font-size: 11px;
+    color: var(--tan);
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+  }
+  .card-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+  .card-price { font-size: 14px; color: var(--charcoal); font-weight: 400; }
+  .card-price-strike {
+    text-decoration: line-through;
+    color: var(--tan);
+    font-size: 12px;
+    margin-right: 6px;
+  }
+  .card-price-sale { color: var(--accent-rust); }
+
+  .card-rating { display: flex; align-items: center; gap: 4px; }
+  .card-stars  { color: var(--accent-gold); font-size: 11px; letter-spacing: -1px; }
+  .card-rcount { font-size: 10px; color: var(--tan); }
+
+  /* ── Color swatches (below card) ── */
+  .product-colors { display: flex; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
+  .color-option { position: relative; cursor: pointer; }
+  .color-swatch {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    display: block;
+    transition: all 0.2s;
+  }
+  .color-option.selected .color-swatch,
+  .color-option:hover    .color-swatch {
+    border-color: var(--charcoal);
+    outline: 2px solid var(--warm-white);
+    outline-offset: -4px;
+  }
+  .color-name-tip {
+    position: absolute;
+    bottom: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 9px;
+    letter-spacing: 1px;
+    white-space: nowrap;
+    color: var(--muted-brown);
+    opacity: 0;
+    transition: opacity 0.2s;
+    pointer-events: none;
+  }
+  .color-option:hover .color-name-tip { opacity: 1; }
+
+  /* ── Mobile: hide size strip on very small screens ── */
+  @media (max-width: 480px) {
+    .card-sizes { display: none; }
+    .card-add-btn { transition: transform 0.3s ease 0s; }
+  }
+</style>

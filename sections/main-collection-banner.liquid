@@ -1,0 +1,163 @@
+{%- liquid
+  assign banner_img = section.settings.banner_image
+  assign bg_color   = section.settings.bg_color
+  assign show_count = section.settings.show_product_count
+-%}
+
+<div class="collection-banner" style="background-color: {{ bg_color }};">
+  {%- if banner_img != blank -%}
+    <div class="collection-banner__media">
+      <img
+        src="{{ banner_img | image_url: width: 1800 }}"
+        alt="{{ banner_img.alt | escape | default: collection.title | escape }}"
+        class="collection-banner__img"
+        width="1800"
+        height="400"
+        loading="eager"
+      >
+      <div class="collection-banner__overlay"></div>
+    </div>
+  {%- elsif collection.image != blank -%}
+    <div class="collection-banner__media">
+      <img
+        src="{{ collection.image | image_url: width: 1800 }}"
+        alt="{{ collection.image.alt | escape | default: collection.title | escape }}"
+        class="collection-banner__img"
+        width="1800"
+        height="400"
+        loading="eager"
+      >
+      <div class="collection-banner__overlay"></div>
+    </div>
+  {%- endif -%}
+
+  <div class="collection-banner__content">
+    {%- if section.settings.eyebrow != blank -%}
+      <p class="section-eyebrow">{{ section.settings.eyebrow }}</p>
+    {%- endif -%}
+    <h1 class="collection-banner__title">{{ collection.title }}</h1>
+    {%- if collection.description != blank and section.settings.show_description -%}
+      <p class="collection-banner__desc">{{ collection.description | strip_html | truncatewords: 30 }}</p>
+    {%- endif -%}
+    {%- if show_count -%}
+      <p class="collection-banner__count">
+        {{ 'collections.general.items_with_count' | t: count: collection.products_count }}
+      </p>
+    {%- endif -%}
+  </div>
+</div>
+
+<style>
+  .collection-banner {
+    position: relative;
+    min-height: {{ section.settings.banner_height }}px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+  .collection-banner__media {
+    position: absolute;
+    inset: 0;
+  }
+  .collection-banner__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .collection-banner__overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, rgba(42,37,32,0.3), rgba(42,37,32,0.6));
+  }
+  .collection-banner__content {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    padding: 60px 40px;
+    color: {%- if banner_img != blank or collection.image != blank -%}#fff{%- else -%}{{ section.settings.text_color }}{%- endif -%};
+  }
+  .collection-banner__title {
+    font-family: var(--font-serif);
+    font-size: clamp(36px, 5vw, 72px);
+    font-weight: 300;
+    line-height: 1.05;
+    letter-spacing: -1px;
+    margin-bottom: 16px;
+  }
+  .collection-banner__desc {
+    font-size: 15px;
+    line-height: 1.8;
+    opacity: 0.85;
+    max-width: 560px;
+    margin: 0 auto 12px;
+  }
+  .collection-banner__count {
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    opacity: 0.6;
+    margin-top: 8px;
+  }
+  @media (max-width: 768px) {
+    .collection-banner { min-height: 220px; }
+    .collection-banner__content { padding: 40px 20px; }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Collection Banner",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "banner_image",
+      "label": "Override Banner Image"
+    },
+    {
+      "type": "range",
+      "id": "banner_height",
+      "label": "Banner Min Height",
+      "min": 200,
+      "max": 600,
+      "step": 20,
+      "default": 340,
+      "unit": "px"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow Text"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_description",
+      "label": "Show Collection Description",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_product_count",
+      "label": "Show Product Count",
+      "default": false
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Background Color (no image)",
+      "default": "#F2EDE5"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text Color (no image)",
+      "default": "#2A2520"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Collection Banner"
+    }
+  ]
+}
+{% endschema %}

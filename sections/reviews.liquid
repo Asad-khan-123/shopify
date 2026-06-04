@@ -1,0 +1,244 @@
+<section class="reviews-section" style="background: {{ section.settings.bg_color }};">
+  <div class="reviews-inner">
+    <div class="section-header">
+      {%- if section.settings.eyebrow != blank -%}
+        <p class="section-eyebrow">{{ section.settings.eyebrow }}</p>
+      {%- endif -%}
+      {%- if section.settings.heading != blank -%}
+        <h2 class="section-title">{{ section.settings.heading }}</h2>
+      {%- endif -%}
+      {%- if section.settings.subheading != blank -%}
+        <p class="section-subtitle">{{ section.settings.subheading }}</p>
+      {%- endif -%}
+      {%- if section.settings.overall_rating != blank -%}
+        <div class="reviews-overall">
+          <span class="reviews-stars" aria-label="{{ section.settings.overall_rating }} out of 5 stars">
+            {%- assign full = section.settings.overall_rating | floor -%}
+            {%- for i in (1..5) -%}
+              {%- if i <= full -%}★{%- else -%}☆{%- endif -%}
+            {%- endfor -%}
+          </span>
+          <span class="reviews-overall-num">{{ section.settings.overall_rating }}</span>
+          {%- if section.settings.total_reviews != blank -%}
+            <span class="reviews-total">{{ section.settings.total_reviews }}</span>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+    </div>
+
+    <div class="reviews-grid" style="--cols: {{ section.settings.columns }};">
+      {%- for block in section.blocks -%}
+        {%- if block.type == 'review' -%}
+          <div class="review-card" {{ block.shopify_attributes }}>
+            <div class="review-card__top">
+              <div class="review-stars" aria-label="{{ block.settings.rating }} out of 5 stars">
+                {%- assign r_full = block.settings.rating | floor -%}
+                {%- for i in (1..5) -%}
+                  {%- if i <= r_full -%}★{%- else -%}☆{%- endif -%}
+                {%- endfor -%}
+              </div>
+              {%- if block.settings.verified -%}
+                <span class="review-verified">{{ section.settings.verified_label }}</span>
+              {%- endif -%}
+            </div>
+
+            {%- if block.settings.title != blank -%}
+              <h3 class="review-title">{{ block.settings.title }}</h3>
+            {%- endif -%}
+
+            {%- if block.settings.body != blank -%}
+              <p class="review-body">{{ block.settings.body }}</p>
+            {%- endif -%}
+
+            <div class="review-meta">
+              {%- if block.settings.image != blank -%}
+                <img src="{{ block.settings.image | image_url: width: 64 }}" alt="{{ block.settings.author | escape }}" class="review-avatar" width="32" height="32" loading="lazy">
+              {%- else -%}
+                <div class="review-avatar-placeholder" aria-hidden="true">
+                  {{ block.settings.author | slice: 0 | upcase }}
+                </div>
+              {%- endif -%}
+              <div>
+                {%- if block.settings.author != blank -%}
+                  <p class="review-author">{{ block.settings.author }}</p>
+                {%- endif -%}
+                {%- if block.settings.date != blank -%}
+                  <p class="review-date">{{ block.settings.date }}</p>
+                {%- endif -%}
+              </div>
+            </div>
+          </div>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+
+    {%- if section.settings.cta_label != blank and section.settings.cta_url != blank -%}
+      <div class="section-cta">
+        <a href="{{ section.settings.cta_url }}" class="btn-ghost">{{ section.settings.cta_label }}</a>
+      </div>
+    {%- endif -%}
+  </div>
+</section>
+
+<style>
+  .reviews-section { padding: var(--section-padding, 100px) 40px; }
+  .reviews-inner { max-width: var(--layout-max-width); margin: 0 auto; }
+  .reviews-overall { display: flex; align-items: center; justify-content: center; gap: 12px; margin-top: 16px; }
+  .reviews-stars { color: var(--accent-gold); font-size: 20px; letter-spacing: -1px; }
+  .reviews-overall-num { font-family: var(--font-serif); font-size: 28px; font-weight: 400; color: var(--charcoal); }
+  .reviews-total { font-size: 13px; color: var(--muted-brown); }
+  .reviews-grid {
+    display: grid;
+    grid-template-columns: repeat(var(--cols, 3), 1fr);
+    gap: 24px;
+    margin-top: 60px;
+  }
+  .review-card {
+    background: var(--ivory, #F2EDE5);
+    padding: 32px;
+    border-radius: 4px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    transition: transform 0.3s, box-shadow 0.3s;
+  }
+  .review-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(42,37,32,0.08); }
+  .review-card__top { display: flex; align-items: center; justify-content: space-between; }
+  .review-stars { color: var(--accent-gold); font-size: 15px; letter-spacing: -0.5px; }
+  .review-verified { font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--accent-gold); border: 1px solid rgba(196,168,130,0.5); padding: 3px 8px; }
+  .review-title { font-family: var(--font-serif); font-size: 18px; font-weight: 400; color: var(--charcoal); line-height: 1.2; }
+  .review-body { font-size: 14px; color: var(--muted-brown); line-height: 1.8; flex: 1; }
+  .review-meta { display: flex; align-items: center; gap: 12px; margin-top: auto; padding-top: 16px; border-top: 1px solid var(--sand); }
+  .review-avatar { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; }
+  .review-avatar-placeholder { width: 32px; height: 32px; border-radius: 50%; background: var(--sand); color: var(--charcoal); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 500; flex-shrink: 0; }
+  .review-author { font-size: 13px; font-weight: 500; color: var(--charcoal); margin-bottom: 2px; }
+  .review-date { font-size: 11px; color: var(--tan); letter-spacing: 0.5px; }
+  .section-cta { text-align: center; margin-top: 48px; }
+  @media (max-width: 1024px) { .reviews-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 640px) {
+    .reviews-section { padding: 60px 20px; }
+    .reviews-grid { grid-template-columns: 1fr; }
+    .review-card { padding: 24px; }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Reviews",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow Text"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading"
+    },
+    {
+      "type": "textarea",
+      "id": "subheading",
+      "label": "Subheading"
+    },
+    {
+      "type": "text",
+      "id": "overall_rating",
+      "label": "Overall Rating (e.g. 4.9)"
+    },
+    {
+      "type": "text",
+      "id": "total_reviews",
+      "label": "Total Reviews Text (e.g. Based on 2,400+ reviews)"
+    },
+    {
+      "type": "text",
+      "id": "verified_label",
+      "label": "Verified Buyer Label"
+    },
+    {
+      "type": "range",
+      "id": "columns",
+      "label": "Columns",
+      "min": 1,
+      "max": 4,
+      "step": 1,
+      "default": 3
+    },
+    {
+      "type": "text",
+      "id": "cta_label",
+      "label": "Button Label"
+    },
+    {
+      "type": "url",
+      "id": "cta_url",
+      "label": "Button URL"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Background Color",
+      "default": "#FDFAF6"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "review",
+      "name": "Review",
+      "settings": [
+        {
+          "type": "range",
+          "id": "rating",
+          "label": "Star Rating",
+          "min": 1,
+          "max": 5,
+          "step": 1,
+          "default": 5
+        },
+        {
+          "type": "checkbox",
+          "id": "verified",
+          "label": "Verified Buyer",
+          "default": true
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Review Title"
+        },
+        {
+          "type": "textarea",
+          "id": "body",
+          "label": "Review Text"
+        },
+        {
+          "type": "text",
+          "id": "author",
+          "label": "Author Name"
+        },
+        {
+          "type": "text",
+          "id": "date",
+          "label": "Date"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Author Avatar"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Reviews",
+      "blocks": [
+        { "type": "review" },
+        { "type": "review" },
+        { "type": "review" }
+      ]
+    }
+  ]
+}
+{% endschema %}

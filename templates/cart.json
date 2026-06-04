@@ -1,0 +1,26 @@
+{
+  "sections": {
+    "main-cart": {
+      "type": "main-cart",
+      "settings": {
+        "heading": "",
+        "summary_heading": "",
+        "empty_heading": "",
+        "empty_subtext": "",
+        "empty_btn_label": "",
+        "remove_label": "",
+        "subtotal_label": "",
+        "savings_label": "",
+        "checkout_label": "",
+        "shipping_note": "",
+        "show_continue": true,
+        "continue_label": "",
+        "show_order_note": false,
+        "show_payment_icons": true
+      }
+    }
+  },
+  "order": [
+    "main-cart"
+  ]
+}

@@ -1,0 +1,130 @@
+{%- render 'breadcrumb' -%}
+<article class="article-section" itemscope itemtype="http://schema.org/BlogPosting">
+  <div class="article-inner">
+    <header class="article-header">
+      {%- if section.settings.show_back -%}
+        <a href="{{ blog.url }}" class="article-back">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="15 18 9 12 15 6"/></svg>
+          {{ section.settings.back_label | default: blog.title }}
+        </a>
+      {%- endif -%}
+
+      {%- if article.tags.size > 0 -%}
+        <div class="article-tags">
+          {%- for tag in article.tags -%}
+            <a href="{{ blog.url }}/tagged/{{ tag | handle }}" class="article-tag">{{ tag }}</a>
+          {%- endfor -%}
+        </div>
+      {%- endif -%}
+
+      <h1 class="article-title" itemprop="headline">{{ article.title | escape }}</h1>
+
+      <div class="article-meta">
+        {%- if section.settings.show_author -%}
+          <span class="article-author">{{ article.author }}</span>
+          <span class="article-sep" aria-hidden="true">·</span>
+        {%- endif -%}
+        {%- if section.settings.show_date -%}
+          <time class="article-date" datetime="{{ article.published_at | date: '%Y-%m-%d' }}" itemprop="datePublished">
+            {{ article.published_at | date: '%B %d, %Y' }}
+          </time>
+        {%- endif -%}
+        {%- if section.settings.show_read_time -%}
+          <span class="article-sep" aria-hidden="true">·</span>
+          <span class="article-read-time">{{ article.content | strip_html | split: ' ' | size | divided_by: 200 | plus: 1 }} min read</span>
+        {%- endif -%}
+      </div>
+    </header>
+
+    {%- if article.image != blank and section.settings.show_hero_image -%}
+      <div class="article-hero">
+        <img
+          src="{{ article.image | image_url: width: 1200 }}"
+          alt="{{ article.image.alt | escape | default: article.title | escape }}"
+          class="article-hero-img"
+          width="1200"
+          height="600"
+          loading="eager"
+          itemprop="image"
+        >
+      </div>
+    {%- endif -%}
+
+    <div class="article-body rte" itemprop="articleBody">
+      {{ article.content }}
+    </div>
+
+    {%- if section.settings.show_share -%}
+      <div class="article-share">
+        <span class="article-share-label">{{ section.settings.share_label }}</span>
+        {%- assign share_url = article.url | prepend: request.origin -%}
+        <a href="https://twitter.com/intent/tweet?text={{ article.title | escape }}&url={{ share_url }}" target="_blank" rel="noopener" class="article-share-btn">Twitter</a>
+        <a href="https://www.facebook.com/sharer/sharer.php?u={{ share_url }}" target="_blank" rel="noopener" class="article-share-btn">Facebook</a>
+        <a href="https://pinterest.com/pin/create/button/?url={{ share_url }}&media={{ article.image | image_url: width: 600 }}" target="_blank" rel="noopener" class="article-share-btn">Pinterest</a>
+      </div>
+    {%- endif -%}
+
+    {%- if blog.next_article or blog.previous_article -%}
+      <nav class="article-nav">
+        {%- if blog.previous_article -%}
+          <a href="{{ blog.previous_article.url }}" class="article-nav-link article-nav-link--prev">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="15 18 9 12 15 6"/></svg>
+            <span>{{ blog.previous_article.title | escape }}</span>
+          </a>
+        {%- else -%}
+          <div></div>
+        {%- endif -%}
+        {%- if blog.next_article -%}
+          <a href="{{ blog.next_article.url }}" class="article-nav-link article-nav-link--next">
+            <span>{{ blog.next_article.title | escape }}</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="9 18 15 12 9 6"/></svg>
+          </a>
+        {%- else -%}
+          <div></div>
+        {%- endif -%}
+      </nav>
+    {%- endif -%}
+  </div>
+</article>
+
+<style>
+  .article-section { padding: 0 40px 100px; }
+  .article-inner { max-width: 760px; margin: 0 auto; }
+  .article-back { display: inline-flex; align-items: center; gap: 8px; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--muted-brown); text-decoration: none; margin-bottom: 32px; transition: color 0.2s; padding-top: 40px; display: flex; }
+  .article-back:hover { color: var(--charcoal); }
+  .article-tags { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+  .article-tag { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--accent-gold); border: 1px solid rgba(196,168,130,0.4); padding: 3px 10px; text-decoration: none; transition: all 0.2s; }
+  .article-tag:hover { background: var(--accent-gold); color: var(--charcoal); }
+  .article-title { font-family: var(--font-serif); font-size: clamp(28px, 4vw, 52px); font-weight: 300; color: var(--charcoal); line-height: 1.1; margin-bottom: 20px; }
+  .article-meta { display: flex; align-items: center; gap: 12px; font-size: 12px; color: var(--tan); letter-spacing: 0.5px; margin-bottom: 40px; flex-wrap: wrap; }
+  .article-sep { color: var(--sand); }
+  .article-hero { margin-bottom: 48px; margin-left: -40px; margin-right: -40px; }
+  .article-hero-img { width: 100%; height: auto; max-height: 540px; object-fit: cover; }
+  .article-body { font-size: 16px; line-height: 1.9; color: var(--muted-brown); }
+  .article-share { display: flex; align-items: center; gap: 16px; margin-top: 60px; padding-top: 32px; border-top: 1px solid var(--sand); flex-wrap: wrap; }
+  .article-share-label { font-size: 11px; letter-spacing: 2.5px; text-transform: uppercase; color: var(--tan); }
+  .article-share-btn { font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted-brown); text-decoration: none; border: 1px solid var(--sand); padding: 8px 16px; transition: all 0.2s; }
+  .article-share-btn:hover { border-color: var(--charcoal); color: var(--charcoal); }
+  .article-nav { display: flex; justify-content: space-between; gap: 24px; margin-top: 60px; padding-top: 40px; border-top: 1px solid var(--sand); }
+  .article-nav-link { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--muted-brown); text-decoration: none; max-width: 45%; transition: color 0.2s; }
+  .article-nav-link:hover { color: var(--charcoal); }
+  .article-nav-link--next { text-align: right; justify-content: flex-end; }
+  @media (max-width: 768px) { .article-section { padding: 0 20px 60px; } .article-hero { margin-left: -20px; margin-right: -20px; } }
+</style>
+
+{% schema %}
+{
+  "name": "Article",
+  "settings": [
+    { "type": "checkbox", "id": "show_back", "label": "Show Back Link", "default": true },
+    { "type": "text", "id": "back_label", "label": "Back Link Label" },
+    { "type": "checkbox", "id": "show_author", "label": "Show Author", "default": true },
+    { "type": "checkbox", "id": "show_date", "label": "Show Date", "default": true },
+    { "type": "checkbox", "id": "show_read_time", "label": "Show Read Time", "default": true },
+    { "type": "checkbox", "id": "show_hero_image", "label": "Show Hero Image", "default": true },
+    { "type": "checkbox", "id": "show_share", "label": "Show Share Buttons", "default": true },
+    { "type": "text", "id": "share_label", "label": "Share Label" }
+  ],
+  "presets": [{ "name": "Article" }]
+}
+{% endschema %}

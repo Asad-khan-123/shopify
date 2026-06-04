@@ -1,0 +1,291 @@
+[
+  {
+    "name": "theme_info",
+    "theme_name": "TSUKIE",
+    "theme_version": "2.0.0",
+    "theme_author": "Antigravity",
+    "theme_documentation_url": "",
+    "theme_support_url": ""
+  },
+  {
+    "name": "Colors",
+    "settings": [
+      {
+        "type": "color",
+        "id": "color_text",
+        "label": "Text Color",
+        "default": ""
+      },
+      {
+        "type": "color",
+        "id": "color_background",
+        "label": "Background Color",
+        "default": ""
+      },
+      {
+        "type": "color",
+        "id": "color_primary_button",
+        "label": "Primary Button",
+        "default": ""
+      },
+      {
+        "type": "color",
+        "id": "color_primary_button_text",
+        "label": "Primary Button Text",
+        "default": ""
+      },
+      {
+        "type": "color",
+        "id": "color_secondary_button",
+        "label": "Secondary Button",
+        "default": ""
+      },
+      {
+        "type": "color",
+        "id": "color_secondary_button_text",
+        "label": "Secondary Button Text",
+        "default": ""
+      },
+      {
+        "type": "color",
+        "id": "color_sale_badge",
+        "label": "Sale Badge",
+        "default": ""
+      },
+      {
+        "type": "color",
+        "id": "color_borders",
+        "label": "Borders",
+        "default": ""
+      },
+      {
+        "type": "color",
+        "id": "color_cream",
+        "label": "Cream",
+        "default": ""
+      },
+      {
+        "type": "color",
+        "id": "color_ivory",
+        "label": "Ivory",
+        "default": ""
+      },
+      {
+        "type": "color",
+        "id": "color_warm_white",
+        "label": "Warm White",
+        "default": ""
+      },
+      {
+        "type": "color",
+        "id": "color_sand",
+        "label": "Sand",
+        "default": ""
+      },
+      {
+        "type": "color",
+        "id": "color_tan",
+        "label": "Tan",
+        "default": ""
+      },
+      {
+        "type": "color",
+        "id": "color_charcoal",
+        "label": "Charcoal",
+        "default": ""
+      },
+      {
+        "type": "color",
+        "id": "color_muted_brown",
+        "label": "Muted Brown",
+        "default": ""
+      },
+      {
+        "type": "color",
+        "id": "color_accent_gold",
+        "label": "Accent Gold",
+        "default": ""
+      },
+      {
+        "type": "color",
+        "id": "color_accent_rust",
+        "label": "Accent Rust",
+        "default": ""
+      }
+    ]
+  },
+  {
+    "name": "Typography",
+    "settings": [
+      {
+        "type": "font_picker",
+        "id": "heading_font",
+        "label": "Heading Font",
+        "default": "cormorant_garamond_n4"
+      },
+      {
+        "type": "font_picker",
+        "id": "body_font",
+        "label": "Body Font",
+        "default": "jost_n3"
+      },
+      {
+        "type": "text",
+        "id": "base_size",
+        "label": "Base Size (px)",
+        "default": ""
+      },
+      {
+        "type": "text",
+        "id": "scale",
+        "label": "Typography Scale Factor",
+        "default": ""
+      }
+    ]
+  },
+  {
+    "name": "Layout",
+    "settings": [
+      {
+        "type": "text",
+        "id": "page_width",
+        "label": "Page Max Width (px)",
+        "default": ""
+      },
+      {
+        "type": "text",
+        "id": "spacing_scale",
+        "label": "Spacing Scale",
+        "default": ""
+      },
+      {
+        "type": "text",
+        "id": "grid_horizontal",
+        "label": "Horizontal Grid Gap (px)",
+        "default": ""
+      },
+      {
+        "type": "text",
+        "id": "grid_vertical",
+        "label": "Vertical Grid Gap (px)",
+        "default": ""
+      }
+    ]
+  },
+  {
+    "name": "Buttons",
+    "settings": [
+      {
+        "type": "text",
+        "id": "border_radius",
+        "label": "Button Border Radius (px)",
+        "default": ""
+      },
+      {
+        "type": "text",
+        "id": "border_thickness",
+        "label": "Button Border Thickness (px)",
+        "default": ""
+      },
+      {
+        "type": "text",
+        "id": "shadow",
+        "label": "Button Shadow CSS",
+        "default": ""
+      }
+    ]
+  },
+  {
+    "name": "Navigation Labels",
+    "settings": [
+      {
+        "type": "text",
+        "id": "nav_cart_label",
+        "label": "Cart Label (e.g. Cart, Bag)",
+        "default": ""
+      },
+      {
+        "type": "text",
+        "id": "nav_home_label",
+        "label": "Home Menu Item Label",
+        "default": ""
+      },
+      {
+        "type": "text",
+        "id": "nav_search_placeholder",
+        "label": "Search Input Placeholder",
+        "default": ""
+      }
+    ]
+  },
+  {
+    "name": "Product Page Labels",
+    "settings": [
+      {
+        "type": "text",
+        "id": "product_label_size",
+        "label": "Size Label",
+        "default": ""
+      },
+      {
+        "type": "text",
+        "id": "product_label_color",
+        "label": "Color Label",
+        "default": ""
+      },
+      {
+        "type": "text",
+        "id": "product_label_add_to_cart",
+        "label": "Add to Cart Label",
+        "default": ""
+      },
+      {
+        "type": "text",
+        "id": "product_label_buy_now",
+        "label": "Buy Now Label",
+        "default": ""
+      },
+      {
+        "type": "text",
+        "id": "product_label_sold_out",
+        "label": "Sold Out Label",
+        "default": ""
+      }
+    ]
+  },
+  {
+    "name": "Social Media",
+    "settings": [
+      {
+        "type": "text",
+        "id": "social_instagram_url",
+        "label": "Instagram URL",
+        "default": ""
+      },
+      {
+        "type": "text",
+        "id": "social_facebook_url",
+        "label": "Facebook URL",
+        "default": ""
+      },
+      {
+        "type": "text",
+        "id": "social_pinterest_url",
+        "label": "Pinterest URL",
+        "default": ""
+      },
+      {
+        "type": "text",
+        "id": "social_tiktok_url",
+        "label": "TikTok URL",
+        "default": ""
+      },
+      {
+        "type": "text",
+        "id": "social_youtube_url",
+        "label": "YouTube URL",
+        "default": ""
+      }
+    ]
+  }
+]

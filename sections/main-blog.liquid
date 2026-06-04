@@ -1,0 +1,198 @@
+<div class="blog-section">
+  <div class="blog-inner">
+    <div class="blog-header">
+      <h1 class="blog-title">{{ blog.title }}</h1>
+      {%- if blog.all_tags.size > 0 -%}
+        <div class="blog-tags" role="list" aria-label="{{ 'blogs.article.tags' | t }}">
+          <a href="{{ blog.url }}" class="blog-tag {% unless current_tags %}active{% endunless %}">
+            {{ section.settings.all_label | default: 'All' }}
+          </a>
+          {%- for tag in blog.all_tags -%}
+            <a href="{{ blog.url }}/tagged/{{ tag | handle }}" class="blog-tag {% if current_tags contains tag %}active{% endif %}">
+              {{ tag }}
+            </a>
+          {%- endfor -%}
+        </div>
+      {%- endif -%}
+    </div>
+
+    {%- paginate blog.articles by section.settings.articles_per_page -%}
+      <div class="blog-grid" style="--cols: {{ section.settings.columns }};">
+        {%- for article in blog.articles -%}
+          <article class="blog-card">
+            {%- if article.image != blank -%}
+              <a href="{{ article.url }}" class="blog-card__img-link" tabindex="-1" aria-hidden="true">
+                <div class="blog-card__media">
+                  <img
+                    src="{{ article.image | image_url: width: 800 }}"
+                    alt="{{ article.image.alt | escape | default: article.title | escape }}"
+                    class="blog-card__img"
+                    width="800"
+                    height="533"
+                    loading="lazy"
+                  >
+                </div>
+              </a>
+            {%- endif -%}
+
+            <div class="blog-card__info">
+              {%- if article.tags.size > 0 and section.settings.show_tags -%}
+                <p class="blog-card__tag">{{ article.tags.first }}</p>
+              {%- endif -%}
+
+              <h2 class="blog-card__title">
+                <a href="{{ article.url }}">{{ article.title | escape }}</a>
+              </h2>
+
+              {%- if section.settings.show_excerpt and article.excerpt != blank -%}
+                <p class="blog-card__excerpt">{{ article.excerpt | strip_html | truncatewords: 20 }}</p>
+              {%- endif -%}
+
+              <div class="blog-card__meta">
+                {%- if section.settings.show_author -%}
+                  <span class="blog-card__author">{{ article.author }}</span>
+                {%- endif -%}
+                {%- if section.settings.show_date -%}
+                  <time class="blog-card__date" datetime="{{ article.published_at | date: '%Y-%m-%d' }}">
+                    {{ article.published_at | date: section.settings.date_format | default: '%B %d, %Y' }}
+                  </time>
+                {%- endif -%}
+              </div>
+
+              <a href="{{ article.url }}" class="blog-card__read-more">
+                {{ section.settings.read_more_label }}
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="9 18 15 12 9 6"/></svg>
+              </a>
+            </div>
+          </article>
+        {%- else -%}
+          <p class="blog-empty">{{ section.settings.empty_text }}</p>
+        {%- endfor -%}
+      </div>
+
+      {%- if paginate.pages > 1 -%}
+        <nav class="pagination" aria-label="{{ 'general.pagination.label' | t }}">
+          {%- if paginate.previous -%}
+            <a href="{{ paginate.previous.url }}" class="pagination-btn">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="15 18 9 12 15 6"/></svg>
+            </a>
+          {%- endif -%}
+          {%- for part in paginate.parts -%}
+            {%- if part.is_link -%}
+              <a href="{{ part.url }}" class="pagination-num">{{ part.title }}</a>
+            {%- else -%}
+              <span class="pagination-num {% if part.title == paginate.current_page %}active{% endif %}">{{ part.title }}</span>
+            {%- endif -%}
+          {%- endfor -%}
+          {%- if paginate.next -%}
+            <a href="{{ paginate.next.url }}" class="pagination-btn">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="9 18 15 12 9 6"/></svg>
+            </a>
+          {%- endif -%}
+        </nav>
+      {%- endif -%}
+    {%- endpaginate -%}
+  </div>
+</div>
+
+<style>
+  .blog-section { padding: 60px 40px 100px; }
+  .blog-inner { max-width: var(--layout-max-width); margin: 0 auto; }
+  .blog-header { margin-bottom: 48px; }
+  .blog-title { font-family: var(--font-serif); font-size: clamp(32px, 4vw, 52px); font-weight: 300; color: var(--charcoal); margin-bottom: 28px; }
+  .blog-tags { display: flex; gap: 12px; flex-wrap: wrap; }
+  .blog-tag { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--muted-brown); text-decoration: none; border: 1px solid var(--sand); padding: 8px 16px; transition: all 0.2s; }
+  .blog-tag:hover, .blog-tag.active { background: var(--charcoal); color: var(--cream); border-color: var(--charcoal); }
+  .blog-grid { display: grid; grid-template-columns: repeat(var(--cols, 3), 1fr); gap: 40px; }
+  .blog-card { display: flex; flex-direction: column; }
+  .blog-card__media { aspect-ratio: 3/2; overflow: hidden; margin-bottom: 20px; }
+  .blog-card__img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; display: block; }
+  .blog-card:hover .blog-card__img { transform: scale(1.04); }
+  .blog-card__info { flex: 1; display: flex; flex-direction: column; }
+  .blog-card__tag { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--accent-gold); margin-bottom: 10px; }
+  .blog-card__title { font-family: var(--font-serif); font-size: 22px; font-weight: 400; color: var(--charcoal); line-height: 1.2; margin-bottom: 12px; }
+  .blog-card__title a { text-decoration: none; color: inherit; transition: color 0.2s; }
+  .blog-card__title a:hover { color: var(--accent-rust); }
+  .blog-card__excerpt { font-size: 14px; color: var(--muted-brown); line-height: 1.8; margin-bottom: 16px; flex: 1; }
+  .blog-card__meta { display: flex; gap: 12px; align-items: center; margin-bottom: 16px; font-size: 12px; color: var(--tan); }
+  .blog-card__read-more { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--accent-rust); text-decoration: none; margin-top: auto; transition: gap 0.2s; }
+  .blog-card__read-more:hover { gap: 10px; }
+  .blog-empty { text-align: center; color: var(--muted-brown); padding: 60px; grid-column: 1/-1; }
+  @media (max-width: 1024px) { .blog-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 768px) { .blog-section { padding: 40px 20px 60px; } .blog-grid { grid-template-columns: 1fr; gap: 32px; } }
+</style>
+
+{% schema %}
+{
+  "name": "Blog Posts",
+  "settings": [
+    {
+      "type": "range",
+      "id": "articles_per_page",
+      "label": "Articles Per Page",
+      "min": 3,
+      "max": 24,
+      "step": 3,
+      "default": 9
+    },
+    {
+      "type": "range",
+      "id": "columns",
+      "label": "Columns",
+      "min": 1,
+      "max": 4,
+      "step": 1,
+      "default": 3
+    },
+    {
+      "type": "checkbox",
+      "id": "show_tags",
+      "label": "Show Article Tags",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_excerpt",
+      "label": "Show Excerpt",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_author",
+      "label": "Show Author",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_date",
+      "label": "Show Date",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "date_format",
+      "label": "Date Format"
+    },
+    {
+      "type": "text",
+      "id": "read_more_label",
+      "label": "Read More Label"
+    },
+    {
+      "type": "text",
+      "id": "all_label",
+      "label": "All Tags Label"
+    },
+    {
+      "type": "text",
+      "id": "empty_text",
+      "label": "No Articles Text"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Blog Posts"
+    }
+  ]
+}
+{% endschema %}

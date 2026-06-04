@@ -1,0 +1,29 @@
+{
+  "current": {
+    "color_cream": "#F8F4EE",
+    "color_ivory": "#F2EDE5",
+    "color_warm_white": "#FDFAF6",
+    "color_sand": "#E8DFD2",
+    "color_tan": "#C9B99A",
+    "color_charcoal": "#2A2520",
+    "color_muted_brown": "#6B5D52",
+    "color_accent_gold": "#C4A882",
+    "color_accent_rust": "#9B6E4E",
+    "color_text": "#2A2520",
+    "color_background": "#FDFAF6",
+    "color_primary_button": "#2A2520",
+    "color_primary_button_text": "#F8F4EE",
+    "color_secondary_button": "transparent",
+    "color_secondary_button_text": "#2A2520",
+    "color_sale_badge": "#9B6E4E",
+    "color_borders": "#E8DFD2",
+    "base_size": 14,
+    "spacing_scale": 1,
+    "grid_horizontal": 24,
+    "grid_vertical": 28,
+    "border_radius": 0,
+    "border_thickness": 1,
+    "shadow": "none",
+    "page_width": 1400
+  }
+}

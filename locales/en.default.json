@@ -1,0 +1,148 @@
+{
+  "general": {
+    "breadcrumbs": {
+      "home": "Home"
+    },
+    "search": {
+      "search": "Search",
+      "title": "Search",
+      "results_count": "{{ count }} results for \"{{ terms }}\"",
+      "no_results_html": "No results for \"{{ terms }}\"",
+      "min_price": "Min price",
+      "max_price": "Max price"
+    },
+    "password_page": {
+      "login_form_heading": "Opening Soon",
+      "login_form_subtext": "Use the password below to access an early preview.",
+      "login_form_password_label": "Password",
+      "login_form_password_placeholder": "Enter password",
+      "login_form_submit": "Enter",
+      "login_form_error": "Wrong password. Please try again."
+    },
+    "pagination": {
+      "label": "Pagination",
+      "previous": "Previous page",
+      "next": "Next page"
+    },
+    "accessibility": {
+      "previous": "Previous",
+      "next": "Next",
+      "star_reviews": "out of 5 stars",
+      "skip_content": "Skip to content"
+    }
+  },
+  "products": {
+    "product": {
+      "add_to_cart": "Add to Cart",
+      "buy_now": "Buy Now",
+      "sold_out": "Sold Out",
+      "unavailable": "Unavailable",
+      "on_sale": "Sale",
+      "new": "New",
+      "save": "Save",
+      "reviews": "reviews",
+      "wishlist": "Add to Wishlist",
+      "low_stock": "Only {{ count }} left in stock",
+      "size_guide": "Size Guide"
+    }
+  },
+  "collections": {
+    "general": {
+      "items_with_count_one": "{{ count }} item",
+      "items_with_count_other": "{{ count }} items"
+    }
+  },
+  "sections": {
+    "header": {
+      "announcement": "Announcement"
+    },
+    "cart": {
+      "title": "Shopping Cart",
+      "subtitle_one": "{{ count }} item",
+      "subtitle_other": "{{ count }} items",
+      "remove": "Remove",
+      "decrease_quantity": "Decrease quantity",
+      "increase_quantity": "Increase quantity"
+    },
+    "collection_template": {
+      "filter_and_sort": "Filter and sort"
+    },
+    "contact_form": {
+      "success": "Thanks for contacting us. We'll be in touch soon!"
+    }
+  },
+  "customer": {
+    "login": {
+      "title": "Log In",
+      "email_label": "Email",
+      "password_label": "Password",
+      "submit": "Sign In",
+      "forgot_password": "Forgot your password?",
+      "create_account": "Create Account",
+      "guest_title": "Continue as Guest"
+    },
+    "register": {
+      "title": "Create Account",
+      "first_name": "First Name",
+      "last_name": "Last Name",
+      "email": "Email",
+      "password": "Password",
+      "submit": "Create Account",
+      "already_account": "Already have an account?"
+    },
+    "reset_password": {
+      "title": "Reset Password",
+      "subtext": "We'll send you an email to reset your password.",
+      "email": "Email",
+      "submit": "Submit",
+      "cancel": "Cancel"
+    },
+    "account": {
+      "title": "My Account",
+      "order_history": "Order History",
+      "details": "Account Details",
+      "logout": "Log Out"
+    },
+    "addresses": {
+      "title": "Addresses",
+      "default": "Default",
+      "add_new": "Add a New Address",
+      "edit": "Edit",
+      "delete": "Delete",
+      "cancel": "Cancel",
+      "save": "Save Address"
+    },
+    "order": {
+      "title": "Order {{ name }}",
+      "date": "Placed on {{ date }}",
+      "payment_status": "Payment Status",
+      "fulfillment_status": "Fulfillment Status",
+      "product": "Product",
+      "sku": "SKU",
+      "price": "Price",
+      "quantity": "Quantity",
+      "total": "Total",
+      "subtotal": "Subtotal",
+      "shipping": "Shipping",
+      "tax": "Tax",
+      "order_total": "Order Total",
+      "billing_address": "Billing Address",
+      "shipping_address": "Shipping Address",
+      "return": "Return to Account"
+    }
+  },
+  "blogs": {
+    "article": {
+      "type": "Article",
+      "comments_with_count_one": "{{ count }} comment",
+      "comments_with_count_other": "{{ count }} comments",
+      "share": "Share",
+      "back_to_blog": "Back to {{ title }}"
+    }
+  },
+  "pages": {
+    "page": {
+      "type": "Page"
+    }
+  }
+}
